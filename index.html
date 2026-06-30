@@ -6,136 +6,208 @@
 <title>재고관리 시스템</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ============================================================
+     ① 사이트 전체 색상 / 기본값 모음
+     여기 색상 코드(#로 시작하는 값)만 바꾸면 사이트 전체의
+     해당 색이 한번에 바뀝니다. (예: --primary를 바꾸면 메인 파란색이
+     쓰인 모든 버튼/글자색이 같이 바뀜)
+     ============================================================ */
   :root {
-    --primary: #4285F4; --primary-light: #E8F0FE;
-    --danger: #EA4335; --danger-light: #FDE8E8;
-    --success: #34A853; --success-light: #E6F4EA;
-    --warning: #FBBC04; --warning-light: #FEF7E0;
-    --gray-50: #F8F9FA; --gray-100: #F1F3F4; --gray-200: #E8EAED;
-    --gray-400: #BDC1C6; --gray-600: #80868B; --gray-900: #202124;
-    --radius: 8px; --shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08);
+    --primary: #4285F4;       /* 메인 색상(파랑) - 관리자 로그인 테두리, 품목추가 버튼, 탭 선택색 등에 쓰임 */
+    --primary-light: #E8F0FE; /* 메인 색상의 연한 버전 - 버튼에 마우스 올렸을 때 배경 등 */
+    --danger: #EA4335;        /* 위험/빼기 색상(빨강) - 마이너스 버튼, 로그아웃 버튼 글자색 */
+    --danger-light: #FDE8E8;  /* 위험 색상의 연한 버전 - 마이너스 버튼 호버 배경 */
+    --success: #34A853;       /* 성공/더하기 색상(초록) - 플러스 버튼, 확인 버튼 배경 */
+    --success-light: #E6F4EA; /* 성공 색상의 연한 버전 - 플러스 버튼 호버 배경 */
+    --warning: #FBBC04;       /* 경고 색상(노랑) - 재고부족 카드 테두리, 동기화중 표시 */
+    --warning-light: #FEF7E0; /* 경고 색상의 연한 버전 - 재고부족 카드 배경 */
+    --gray-50: #F8F9FA;       /* 아주 옅은 회색 - 페이지 배경 */
+    --gray-100: #F1F3F4;      /* 옅은 회색 - 일반 배지 배경 */
+    --gray-200: #E8EAED;      /* 연한 회색 - 테두리선 색 */
+    --gray-400: #BDC1C6;      /* 중간 회색 (현재 미사용) */
+    --gray-600: #80868B;      /* 진한 회색 - 보조 설명 글자색 */
+    --gray-900: #202124;      /* 거의 검정 - 기본 글자색 */
+    --radius: 8px;            /* 기본 모서리 둥글기(클수록 더 둥글어짐) */
+    --shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08); /* 카드/헤더 그림자 */
   }
+
   body { font-family: 'Google Sans', Roboto, Arial, sans-serif; background: var(--gray-50); color: var(--gray-900); min-height: 100vh; }
-  .header { background: #fff; border-bottom: 1px solid var(--gray-200); padding: 0 1.5rem; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 10; box-shadow: var(--shadow); }
-  .header h1 { font-size: 18px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
-  .header h1 span { color: var(--primary); }
-  .header-right { display: flex; align-items: center; gap: 10px; }
-  .sync-status { font-size: 12px; color: var(--gray-600); display: flex; align-items: center; gap: 5px; }
-  .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); }
+
+  /* ============================================================
+     ② 상단 헤더 영역 (제목 + 동기화 상태 + 로그인/추가 버튼들)
+     ============================================================ */
+  .header { background: #fff; border-bottom: 1px solid var(--gray-200); padding: 0 1.5rem; display: flex; align-items: center; justify-content: space-between; height: 60px; /* 헤더 전체 높이 */ position: sticky; top: 0; z-index: 10; box-shadow: var(--shadow); }
+  .header h1 { font-size: 18px; /* "재고관리" 제목 글자 크기 */ font-weight: 500; display: flex; align-items: center; gap: 8px; }
+  .header h1 span { color: var(--primary); } /* "재고" 글자만 파란색 */
+  .header-right { display: flex; align-items: center; gap: 10px; /* 헤더 우측 버튼들 사이 간격 */ }
+  .sync-status { font-size: 12px; color: var(--gray-600); display: flex; align-items: center; gap: 5px; } /* "연결됨" 글자 */
+  .sync-dot { width: 8px; height: 8px; /* 동기화 점 크기 */ border-radius: 50%; background: var(--success); }
   .sync-dot.loading { background: var(--warning); animation: pulse 1s infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* 탭 버튼 ("재고 현황" / "입출고 이력" 전환 버튼) */
   .tab-bar { background: #fff; border-bottom: 1px solid var(--gray-200); padding: 0 1.5rem; display: flex; }
-  .tab { padding: 14px 20px; font-size: 14px; font-weight: 500; color: var(--gray-600); border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.15s; }
-  .tab.active { color: var(--primary); border-bottom-color: var(--primary); }
-  .main { max-width: 960px; margin: 0 auto; padding: 1.5rem; }
-  .toolbar { display: flex; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; align-items: center; }
-  .search-input { flex: 1; min-width: 180px; padding: 9px 14px; border: 1px solid var(--gray-200); border-radius: var(--radius); font-size: 14px; background: #fff; color: var(--gray-900); outline: none; }
+  .tab { padding: 14px 20px; /* 탭 버튼 위아래/좌우 여백 = 클릭 영역 크기 */ font-size: 14px; /* 탭 글자 크기 */ font-weight: 500; color: var(--gray-600); border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.15s; }
+  .tab.active { color: var(--primary); border-bottom-color: var(--primary); } /* 선택된 탭은 파란 글자 + 파란 밑줄 */
+
+  .main { max-width: 960px; margin: 0 auto; padding: 1.5rem; /* 본문 영역 좌우 여백 */ }
+
+  /* 검색창 + 정렬 드롭다운 + 새로고침 버튼이 있는 줄 */
+  .toolbar { display: flex; gap: 8px; /* 검색창/버튼 사이 간격 */ margin-bottom: 1rem; flex-wrap: wrap; align-items: center; }
+  .search-input { flex: 1; min-width: 180px; padding: 9px 14px; /* 검색창 안쪽 여백(클수록 통통해짐) */ border: 1px solid var(--gray-200); border-radius: var(--radius); font-size: 14px; /* 검색창 글자 크기 */ background: #fff; color: var(--gray-900); outline: none; }
   .search-input:focus { border-color: var(--primary); }
-  .filter-select { padding: 9px 12px; border: 1px solid var(--gray-200); border-radius: var(--radius); font-size: 14px; background: #fff; color: var(--gray-900); outline: none; cursor: pointer; }
-  .btn { padding: 9px 18px; border-radius: var(--radius); font-size: 14px; font-weight: 500; cursor: pointer; border: none; transition: all 0.15s; }
-  .btn-primary { background: var(--primary); color: #fff; }
-  .btn-primary:hover { background: #3367D6; }
-  .btn-outline { background: #fff; color: var(--primary); border: 1px solid var(--primary); }
+  .filter-select { padding: 9px 12px; border: 1px solid var(--gray-200); border-radius: var(--radius); font-size: 14px; background: #fff; color: var(--gray-900); outline: none; cursor: pointer; } /* 정렬 드롭다운 */
+
+  /* "🔒 관리자 로그인" / "+ 품목 추가" / "↻ 새로고침" 등 공통 버튼 모양 */
+  .btn { padding: 9px 18px; /* 버튼 크기(여백) */ border-radius: var(--radius); /* 버튼 모서리 둥글기 */ font-size: 14px; /* 버튼 글자 크기 */ font-weight: 500; cursor: pointer; border: none; transition: all 0.15s; }
+  .btn-primary { background: var(--primary); color: #fff; } /* 꽉찬 파란 버튼: "+ 품목 추가" */
+  .btn-primary:hover { background: #3367D6; } /* 위 버튼 마우스 올렸을 때 색 */
+  .btn-outline { background: #fff; color: var(--primary); border: 1px solid var(--primary); } /* 테두리만 있는 버튼: "관리자 로그인", "새로고침" */
   .btn-outline:hover { background: var(--primary-light); }
-  .cat-filter-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1rem; }
-  .cat-chip { padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: 500; border: 1px solid var(--gray-200); background: #fff; color: var(--gray-600); cursor: pointer; transition: all 0.15s; }
-  .cat-chip.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+  /* 카테고리 칩 버튼 (전체 / ⚠악성재고 / 강관 / 각관 ... 둥근 알약 모양 필터) */
+  .cat-filter-row { display: flex; gap: 6px; /* 칩들 사이 간격 */ flex-wrap: wrap; margin-bottom: 1rem; }
+  .cat-chip { padding: 5px 14px; /* 칩 크기 */ border-radius: 20px; /* 둥근 알약 모양 정도 */ font-size: 13px; /* 칩 글자 크기 */ font-weight: 500; border: 1px solid var(--gray-200); background: #fff; color: var(--gray-600); cursor: pointer; transition: all 0.15s; }
+  .cat-chip.active { background: var(--primary); color: #fff; border-color: var(--primary); } /* 선택된 칩은 파란 배경 */
+
+  /* 정렬을 "카테고리순"으로 했을 때 보이는 그룹 제목 */
   .cat-group { margin-bottom: 1.5rem; }
   .cat-group-title { font-size: 13px; font-weight: 600; color: var(--gray-600); padding: 6px 12px; background: var(--gray-100); border-radius: var(--radius); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
-  .cat-count { font-size: 11px; background: var(--gray-200); color: var(--gray-600); padding: 1px 7px; border-radius: 10px; }
-  /* 카드 */
-  .item-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; padding: 10px 12px; margin-bottom: 6px; box-shadow: var(--shadow); }
-  .item-card.low { border-color: var(--warning); background: var(--warning-light); }
+  .cat-count { font-size: 11px; background: var(--gray-200); color: var(--gray-600); padding: 1px 7px; border-radius: 10px; } /* "n개 품목" 작은 숫자 배지 */
+
+  /* ============================================================
+     ③ 품목 카드 (재고 목록에서 품목 한 줄 한 줄)
+     ============================================================ */
+  .item-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; /* 카드 모서리 둥글기 */ padding: 10px 12px; /* 카드 안쪽 여백 */ margin-bottom: 6px; /* 카드와 카드 사이 간격 */ box-shadow: var(--shadow); }
+  .item-card.low { border-color: var(--warning); background: var(--warning-light); } /* 재고부족 카드는 노란 테두리+배경 */
   .item-body { display: flex; align-items: center; gap: 8px; min-height: 44px; flex-wrap: wrap; }
-  /* 좌측: flex로 배지 크기 자연스럽게 */
-  .item-left { flex: 1; min-width: 0; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+
+  .item-left { flex: 1; min-width: 0; display: flex; align-items: center; gap: 6px; /* 좌측 배지들 사이 간격 */ flex-wrap: wrap; }
   .item-field { white-space: nowrap; }
-  /* 악성 배지 */
-  .item-field.f-bad { display: inline-flex; align-items: center; justify-content: center; color: #e03131; font-weight: 700; border: 1.5px solid #e03131; border-radius: 50px; padding: 3px 10px; font-size: 13px; background: #fff; white-space: nowrap; }
-  /* 일반 배지 (라벨 단추 모양 유지) */
-  .item-field.f-badge { display: inline-flex; align-items: center; justify-content: center; background: var(--gray-100); color: var(--gray-900); border-radius: 50px; padding: 3px 8px; font-size: 13px; font-weight: 500; white-space: nowrap; }
+
+  /* "악성" 빨간 배지 */
+  .item-field.f-bad { display: inline-flex; align-items: center; justify-content: center; color: #e03131; /* 악성 글자색(빨강) */ font-weight: 700; border: 1.5px solid #e03131; /* 악성 테두리 두께/색 */ border-radius: 50px; padding: 3px 10px; /* 악성 배지 크기 */ font-size: 13px; background: #fff; white-space: nowrap; }
+
+  /* 일반 배지 (규격/품목명/사이즈/재질/두께를 보여주는 회색 알약) */
+  .item-field.f-badge { display: inline-flex; align-items: center; justify-content: center; background: var(--gray-100); /* 일반 배지 배경색(회색) */ color: var(--gray-900); border-radius: 50px; padding: 3px 8px; /* 일반 배지 크기 */ font-size: 13px; /* 일반 배지 글자 크기 */ font-weight: 500; white-space: nowrap; }
+
+  /* 카테고리 파란 배지(강관/각관 등) */
   .item-field.f-cat { background: #E8F0FE; color: #1a56c4; border-radius: 50px; padding: 3px 8px; font-size: 13px; font-weight: 500; white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; }
-  .item-warn { font-size: 12px; color: #B06000; background: var(--warning-light); border-radius: 50px; padding: 2px 8px; white-space: nowrap; }
-  /* 우측: 수량 컨트롤 */
-  .item-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; justify-content: flex-end; width: 100%; }
-  .badge-qty { color: #e03131; font-weight: 700; font-size: 14px; padding: 6px 14px; border-radius: 50px; white-space: nowrap; border: 1.5px solid #e03131; background: #fff; }
-  .badge-qty.pending { border-color: var(--warning); color: #7a5c00; }
-  /* −/+ 세로 배치 */
-  .qty-pm-wrap { display: flex; flex-direction: column; gap: 3px; }
-  .qty-btn { width: 28px; height: 28px; border-radius: 50%; background: #fff; font-size: 17px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s; flex-shrink: 0; border: 1.5px solid; line-height: 1; padding: 0; }
-  .qty-btn-minus { color: var(--danger); border-color: var(--danger); }
+
+  .item-warn { font-size: 12px; color: #B06000; background: var(--warning-light); border-radius: 50px; padding: 2px 8px; white-space: nowrap; } /* "⚠ 부족" 작은 글자 */
+
+  /* 카드 우측: 현재수량 배지 + 수량 조절 버튼들이 있는 영역 */
+  .item-right { display: flex; align-items: center; gap: 6px; /* 우측 버튼들 사이 간격 */ flex-shrink: 0; justify-content: flex-end; width: 100%; }
+
+  /* "현재수량 : n" 빨간 테두리 배지 */
+  .badge-qty { color: #e03131; font-weight: 700; font-size: 14px; /* 수량 배지 글자 크기 */ padding: 6px 14px; /* 수량 배지 크기 */ border-radius: 50px; white-space: nowrap; border: 1.5px solid #e03131; background: #fff; }
+  .badge-qty.pending { border-color: var(--warning); color: #7a5c00; } /* 수량 변경 중(아직 저장 전)일 때 노란색으로 바뀜 */
+
+  /* −(빼기) / +(더하기) 방향 선택 버튼 — 세로로 두 개 쌓여있는 작은 동그라미 버튼 */
+  .qty-pm-wrap { display: flex; flex-direction: column; gap: 3px; /* −버튼과 +버튼 사이 간격 */ }
+  .qty-btn { width: 28px; height: 28px; /* −/+ 버튼 크기(동그라미 지름) */ border-radius: 50%; background: #fff; font-size: 17px; /* −/+ 기호 글자 크기 */ cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s; flex-shrink: 0; border: 1.5px solid; line-height: 1; padding: 0; }
+  .qty-btn-minus { color: var(--danger); border-color: var(--danger); } /* − 버튼: 빨간 글자/테두리 */
   .qty-btn-minus:hover { background: var(--danger-light); }
-  .qty-btn-plus { color: var(--success); border-color: var(--success); }
+  .qty-btn-plus { color: var(--success); border-color: var(--success); } /* + 버튼: 초록 글자/테두리 */
   .qty-btn-plus:hover { background: var(--success-light); }
-  .qty-btn-minus.active-minus { background: var(--danger); color: #fff; }
-  .qty-btn-plus.active-plus   { background: var(--success); color: #fff; }
-  /* 수량 입력창 */
-  .qty-direct-input { width: 100px; padding: 4px 10px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 14px; font-weight: 700; text-align: right; outline: none; color: var(--gray-900); }
+  .qty-btn-minus.active-minus { background: var(--danger); color: #fff; } /* − 버튼이 선택(활성)되면 꽉 찬 빨강 */
+  .qty-btn-plus.active-plus   { background: var(--success); color: #fff; } /* + 버튼이 선택(활성)되면 꽉 찬 초록 */
+
+  /* 수량 직접 입력하는 칸 (숫자 타이핑하는 작은 네모) */
+  .qty-direct-input { width: 52px; /* 입력칸 가로 폭 */ padding: 4px 8px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 14px; font-weight: 700; text-align: right; outline: none; color: var(--gray-900); }
   .qty-direct-input:focus { border-color: var(--primary); }
-  /* 확인/취소 */
-  .qty-confirm-btn { height: 36px; padding: 0 16px; background: var(--success); color: #fff; border: none; border-radius: 50px; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+
+  /* "✔ 확인" 초록 알약 버튼 — 수량 변경을 실제로 서버에 저장할 때 누르는 버튼 */
+  .qty-confirm-btn { height: 36px; /* 확인 버튼 높이 */ padding: 0 16px; /* 확인 버튼 좌우 여백(폭) */ background: var(--success); color: #fff; border: none; border-radius: 50px; font-size: 13px; /* 확인 버튼 글자 크기 */ font-weight: 700; cursor: pointer; white-space: nowrap; }
   .qty-confirm-btn:hover { background: #2d9246; }
-  .qty-cancel-btn { width: 32px; height: 32px; border-radius: 50%; background: #fff; color: var(--gray-600); border: 1.5px solid var(--gray-200); font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+  /* "✕" 취소 버튼 — 수량 변경 중인 것을 취소하는 작은 동그라미 버튼 (현재 화면에는 표시되지 않음) */
+  .qty-cancel-btn { width: 32px; height: 32px; /* 취소 버튼 크기 */ border-radius: 50%; background: #fff; color: var(--gray-600); border: 1.5px solid var(--gray-200); font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
   .qty-cancel-btn:hover { background: var(--gray-100); }
+
+  /* ============================================================
+     ④ 입출고 이력 표
+     ============================================================ */
   .log-table-wrap { background: #fff; border: 1px solid var(--gray-200); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); }
-  .log-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .log-table th { background: var(--gray-50); color: var(--gray-600); font-weight: 600; font-size: 12px; padding: 10px 16px; text-align: left; border-bottom: 1px solid var(--gray-200); }
-  .log-table td { padding: 10px 16px; border-bottom: 1px solid var(--gray-100); }
+  .log-table { width: 100%; border-collapse: collapse; font-size: 13px; /* 표 전체 글자 크기 */ }
+  .log-table th { background: var(--gray-50); color: var(--gray-600); font-weight: 600; font-size: 12px; padding: 10px 16px; /* 표 머리글 칸 여백 */ text-align: left; border-bottom: 1px solid var(--gray-200); }
+  .log-table td { padding: 10px 16px; /* 표 내용 칸 여백 */ border-bottom: 1px solid var(--gray-100); }
   .log-table tr:last-child td { border-bottom: none; }
   .log-table tr:hover td { background: var(--gray-50); }
-  .chg-in { color: var(--success); font-weight: 600; }
-  .chg-out { color: var(--danger); font-weight: 600; }
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 1rem; }
-  .modal { background: #fff; border-radius: 16px; padding: 1.75rem; width: 420px; max-width: 100%; box-shadow: 0 8px 32px rgba(0,0,0,0.18); max-height: 90vh; overflow-y: auto; }
-  .modal h3 { font-size: 18px; font-weight: 600; margin-bottom: 1.25rem; }
-  .form-group { margin-bottom: 14px; }
-  .form-group input, .form-group select { width: 100%; padding: 9px 12px; border: 1px solid var(--gray-200); border-radius: var(--radius); font-size: 14px; color: var(--gray-900); outline: none; background: #fff; }
+  .chg-in { color: var(--success); font-weight: 600; } /* 입고(+) 글자는 초록 */
+  .chg-out { color: var(--danger); font-weight: 600; } /* 출고(-) 글자는 빨강 */
+
+  /* ============================================================
+     ⑤ 팝업창(모달) 공통 — 관리자 로그인 창 / 품목 추가·수정 창
+     ============================================================ */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); /* 팝업 뒤 어둡게 깔리는 배경(숫자 0.4=투명도) */ display: flex; align-items: center; justify-content: center; z-index: 100; padding: 1rem; }
+  .modal { background: #fff; border-radius: 16px; /* 팝업창 모서리 둥글기 */ padding: 1.75rem; /* 팝업창 안쪽 여백 */ width: 420px; /* 팝업창 가로 폭 */ max-width: 100%; box-shadow: 0 8px 32px rgba(0,0,0,0.18); max-height: 90vh; overflow-y: auto; }
+  .modal h3 { font-size: 18px; /* 팝업창 제목 글자 크기 */ font-weight: 600; margin-bottom: 1.25rem; }
+  .form-group { margin-bottom: 14px; /* 입력칸과 입력칸 사이 위아래 간격 */ }
+  .form-group input, .form-group select { width: 100%; padding: 9px 12px; /* 입력칸 안쪽 여백 */ border: 1px solid var(--gray-200); border-radius: var(--radius); font-size: 14px; /* 입력칸 글자 크기 */ color: var(--gray-900); outline: none; background: #fff; }
   .form-group input:focus, .form-group select:focus { border-color: var(--primary); }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .modal-btns { display: flex; gap: 10px; justify-content: flex-end; margin-top: 1.25rem; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; /* 두 칸씩 나란히 배치할 때 사이 간격 */ }
+  .modal-btns { display: flex; gap: 10px; justify-content: flex-end; margin-top: 1.25rem; } /* "취소"/"저장" 버튼 줄 */
   .field-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
-  .field-label { font-size: 13px; color: var(--gray-600); font-weight: 500; }
-  .manage-btn { background: none; border: none; color: var(--primary); font-size: 12px; font-weight: 600; cursor: pointer; padding: 0; }
+  .field-label { font-size: 13px; color: var(--gray-600); font-weight: 500; } /* "카테고리 *", "재질" 같은 항목 이름 글자 */
+
+  /* "+ 관리" 텍스트 버튼 — 카테고리/재질/규격/두께 목록을 추가·삭제하는 패널을 여는 버튼 */
+  .manage-btn { background: none; border: none; color: var(--primary); font-size: 12px; /* + 관리 버튼 글자 크기 */ font-weight: 600; cursor: pointer; padding: 0; }
   .manage-btn:hover { text-decoration: underline; }
-  .inline-panel { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 10px; margin-top: 6px; margin-bottom: 6px; }
+
+  /* "+ 관리" 버튼을 누르면 펼쳐지는 회색 박스 영역 */
+  .inline-panel { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 10px; /* 패널 안쪽 여백 */ margin-top: 6px; margin-bottom: 6px; }
   .tag-wrap { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; min-height: 26px; }
-  .itag { font-size: 12px; padding: 3px 10px; border-radius: 20px; background: #E8F0FE; color: #1a56c4; display: inline-flex; align-items: center; gap: 3px; }
-  .itag-del { background: none; border: none; color: #1a56c4; cursor: pointer; font-size: 14px; line-height: 1; padding: 0; }
+
+  /* 관리 패널 안의 파란 알약 태그 (예: "강관 ×") */
+  .itag { font-size: 12px; /* 태그 글자 크기 */ padding: 3px 10px; /* 태그 크기 */ border-radius: 20px; background: #E8F0FE; color: #1a56c4; display: inline-flex; align-items: center; gap: 3px; }
+  .itag-del { background: none; border: none; color: #1a56c4; cursor: pointer; font-size: 14px; line-height: 1; padding: 0; } /* 태그 옆 "×" 삭제 버튼 */
+
+  /* 관리 패널 안의 "새 항목 입력 + 추가" 줄 */
   .add-row { display: flex; gap: 6px; }
   .add-row input { flex: 1; padding: 6px 10px; border: 1px solid var(--gray-200); border-radius: var(--radius); font-size: 13px; outline: none; background: #fff; }
   .add-row input:focus { border-color: var(--primary); }
-  .add-row button { padding: 6px 14px; background: var(--primary); color: #fff; border: none; border-radius: 20px; font-size: 13px; cursor: pointer; white-space: nowrap; }
-  .section-label { font-size: 12px; font-weight: 600; color: var(--gray-600); text-transform: uppercase; letter-spacing: 0.05em; margin: 1.25rem 0 0.6rem; }
-  .empty { text-align: center; padding: 3rem 1rem; color: var(--gray-600); }
+  .add-row button { padding: 6px 14px; /* "추가" 버튼 크기 */ background: var(--primary); color: #fff; border: none; border-radius: 20px; font-size: 13px; /* "추가" 버튼 글자 크기 */ cursor: pointer; white-space: nowrap; } /* "추가" 버튼 */
+
+  .section-label { font-size: 12px; font-weight: 600; color: var(--gray-600); text-transform: uppercase; letter-spacing: 0.05em; margin: 1.25rem 0 0.6rem; } /* "⚠ 재고 부족" 같은 섹션 제목 */
+  .empty { text-align: center; padding: 3rem 1rem; color: var(--gray-600); } /* "품목이 없습니다" 안내 문구 */
   .empty-icon { font-size: 40px; margin-bottom: 12px; }
-  .loading { text-align: center; padding: 3rem; color: var(--gray-600); font-size: 14px; }
-  /* 캐시 배너 */
+  .loading { text-align: center; padding: 3rem; color: var(--gray-600); font-size: 14px; } /* "불러오는 중..." 안내 문구 */
+
+  /* 화면 상단에 뜨는 노란 캐시 안내 줄 */
   .cache-banner { background: var(--warning-light); border-bottom: 1px solid var(--warning); padding: 6px 1.5rem; font-size: 12px; color: #7a5c00; display: flex; align-items: center; gap: 8px; }
   .cache-banner.hidden { display: none; }
-  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--gray-900); color: #fff; padding: 10px 22px; border-radius: 24px; font-size: 14px; opacity: 0; transition: opacity 0.2s; z-index: 200; pointer-events: none; white-space: nowrap; }
+
+  /* 화면 하단에 잠깐 떴다 사라지는 검정 알림 메시지(토스트) */
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--gray-900); color: #fff; padding: 10px 22px; /* 토스트 크기 */ border-radius: 24px; font-size: 14px; /* 토스트 글자 크기 */ opacity: 0; transition: opacity 0.2s; z-index: 200; pointer-events: none; white-space: nowrap; }
   .toast.show { opacity: 1; }
+
+  /* ============================================================
+     ⑥ 휴대폰 화면(가로 600px 이하)에서 적용되는 스타일
+     PC 화면과 다르게 보이게 하고 싶은 값만 여기서 다시 지정합니다.
+     ============================================================ */
   @media (max-width: 600px) {
     .main { padding: 0.75rem; }
     /* 헤더 모바일 */
     .header { padding: 0 0.75rem; height: auto; min-height: 56px; flex-wrap: wrap; gap: 6px; padding-top: 8px; padding-bottom: 8px; }
     .header h1 { font-size: 16px; }
     .header-right { gap: 6px; flex-wrap: wrap; }
-    .header-right .btn { font-size: 11px; padding: 5px 10px; }
-    #admin-badge { font-size: 11px; padding: 4px 8px; }
+    .header-right .btn { font-size: 11px; padding: 5px 10px; } /* 모바일에서 헤더 버튼들 글자/크기 축소 */
+    #admin-badge { font-size: 11px; padding: 4px 8px; } /* 모바일 "관리자 모드" 배지 크기 */
     /* 카드 모바일 */
     .item-card { padding: 10px; }
     .item-body { gap: 6px; }
     .item-left { flex-wrap: wrap; gap: 4px; }
     .item-right { width: 100%; justify-content: flex-end; margin-left: 0; margin-top: 6px; flex-wrap: wrap; gap: 6px; }
-    .badge-qty { font-size: 13px; padding: 5px 10px; }
-    .qty-confirm-btn { height: 32px; padding: 0 12px; font-size: 12px; }
+    .badge-qty { font-size: 13px; padding: 5px 10px; } /* 모바일 수량 배지 크기 */
+    .qty-confirm-btn { height: 32px; padding: 0 12px; font-size: 12px; } /* 모바일 확인 버튼 크기 */
     .qty-direct-input { width: 60px; }
     /* 툴바 */
     .toolbar { gap: 6px; }
     .search-input { min-width: 0; }
   }
-</style>
-</head>
+</style></head>
 <body>
 
 <div class="header">
@@ -317,8 +389,8 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const SUPABASE_URL  = 'https://lhixtdtgbjylkgrndhfy.supabase.co';   // ← 여기에 Project URL 입력
-const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxoaXh0ZHRnYmp5bGtncm5kaGZ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4MjM0NDgsImV4cCI6MjA5ODM5OTQ0OH0.3jIRWf8hVuPLjYuaez_WIRw0H4GiyHhltk2yhyTuAYs';   // ← 여기에 anon public key 입력
+const SUPABASE_URL  = 'YOUR_SUPABASE_URL';   // ← 여기에 Project URL 입력
+const SUPABASE_KEY  = 'YOUR_SUPABASE_KEY';   // ← 여기에 anon public key 입력
 const ADMIN_PASSWORD = '9096';                // ← 비밀번호
 
 const CACHE_KEY = 'inv_cache';
@@ -486,10 +558,7 @@ function applyAdminUI() {
   document.getElementById('admin-login-btn').style.display  = isAdmin ? 'none' : '';
   document.getElementById('admin-logout-btn').style.display = isAdmin ? '' : 'none';
   document.getElementById('add-btn').style.display          = isAdmin ? '' : 'none';
-  document.querySelectorAll('.admin-only').forEach(el => {
-    if (el.classList.contains('qty-adj-panel')) return;
-    el.style.display = isAdmin ? '' : 'none';
-  });
+  document.querySelectorAll('.admin-only').forEach(el => { el.style.display = isAdmin ? '' : 'none'; });
 }
 
 // ============================================================
@@ -789,21 +858,6 @@ function cancelQty(id) {
   document.getElementById('qty-cancel-'+id).style.display  = 'none';
   // 방향 초기화
   toggleSign(id, 'minus');
-}
-
-async function changeQty(id, delta) {
-  const item = items.find(i => i.id===id); if (!item) return;
-  const newQty = Math.max(0, item.qty + delta);
-  await sb(`품목?id=eq.${id}`, 'PATCH', {qty: newQty});
-  await sb('입출고이력', 'POST', {
-    item_id: id, category: item.category, name: item.name,
-    delta, qty: newQty
-  });
-  item.qty = newQty;
-  const time = new Date().toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
-  logs.unshift({id, name:item.name, category:item.category, delta, qty:newQty, time});
-  saveCache({items, logs});
-  renderItems(); applyAdminUI(); renderLog();
 }
 
 function renderLog() {
