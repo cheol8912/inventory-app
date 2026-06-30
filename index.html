@@ -28,56 +28,44 @@
   .tab { padding: 14px 20px; font-size: 14px; font-weight: 500; color: var(--gray-600); border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.15s; }
   .tab.active { color: var(--primary); border-bottom-color: var(--primary); }
   .main { max-width: 960px; margin: 0 auto; padding: 1.5rem; }
-
-  /* 툴바 */
   .toolbar { display: flex; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; align-items: center; }
-  .search-input { flex: 1; min-width: 180px; padding: 9px 14px; border: 1px solid var(--gray-200); border-radius: var(--radius); font-size: 14px; background: #fff; color: var(--gray-900); outline: none; transition: border-color 0.15s; }
+  .search-input { flex: 1; min-width: 180px; padding: 9px 14px; border: 1px solid var(--gray-200); border-radius: var(--radius); font-size: 14px; background: #fff; color: var(--gray-900); outline: none; }
   .search-input:focus { border-color: var(--primary); }
   .filter-select { padding: 9px 12px; border: 1px solid var(--gray-200); border-radius: var(--radius); font-size: 14px; background: #fff; color: var(--gray-900); outline: none; cursor: pointer; }
-  .filter-select:focus { border-color: var(--primary); }
   .btn { padding: 9px 18px; border-radius: var(--radius); font-size: 14px; font-weight: 500; cursor: pointer; border: none; transition: all 0.15s; }
   .btn-primary { background: var(--primary); color: #fff; }
   .btn-primary:hover { background: #3367D6; }
   .btn-outline { background: #fff; color: var(--primary); border: 1px solid var(--primary); }
   .btn-outline:hover { background: var(--primary-light); }
-
-  /* 카테고리 필터 버튼 */
   .cat-filter-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1rem; }
   .cat-chip { padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: 500; border: 1px solid var(--gray-200); background: #fff; color: var(--gray-600); cursor: pointer; transition: all 0.15s; }
   .cat-chip.active { background: var(--primary); color: #fff; border-color: var(--primary); }
-
-  /* 카테고리별 그룹 */
   .cat-group { margin-bottom: 1.5rem; }
   .cat-group-title { font-size: 13px; font-weight: 600; color: var(--gray-600); padding: 6px 12px; background: var(--gray-100); border-radius: var(--radius); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
   .cat-count { font-size: 11px; background: var(--gray-200); color: var(--gray-600); padding: 1px 7px; border-radius: 10px; }
 
-  /* 품목 카드 */
+  /* 카드 */
   .item-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; padding: 14px 20px; margin-bottom: 8px; box-shadow: var(--shadow); }
   .item-card.low { border-color: var(--warning); background: var(--warning-light); }
-  .item-body { display: flex; align-items: flex-start; gap: 6px; flex-direction: column; }
+  .item-body { display: flex; flex-direction: column; gap: 6px; }
   .badges { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; width: 100%; }
-  /* 배지 - 회색 기본 */
-  .badge { font-size: clamp(10px, 2.5vw, 13px); font-weight: 500; padding: clamp(3px,1vw,5px) clamp(7px,2vw,12px); border-radius: 50px; background: var(--gray-100); color: var(--gray-900); display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; }
+  .badge { font-size: clamp(10px,2.5vw,13px); font-weight: 500; padding: clamp(3px,1vw,5px) clamp(7px,2vw,12px); border-radius: 50px; background: var(--gray-100); color: var(--gray-900); display: inline-flex; align-items: center; white-space: nowrap; }
   .badge-cat { background: #E8F0FE; color: #1a56c4; }
-  .badge-qty { background: var(--gray-100); color: #e03131; font-weight: 700; font-size: clamp(11px, 2.8vw, 14px); padding: clamp(3px,1vw,5px) clamp(8px,2.5vw,14px); border-radius: 50px; white-space: nowrap; border: 1.5px solid #e03131; }
-  .badge-warn { background: var(--warning-light); color: #B06000; font-size: clamp(10px, 2.2vw, 12px); padding: 3px 8px; border-radius: 50px; }
+  .badge-qty { background: var(--gray-100); color: #e03131; font-weight: 700; font-size: clamp(11px,2.8vw,14px); padding: clamp(3px,1vw,5px) clamp(8px,2.5vw,14px); border-radius: 50px; white-space: nowrap; border: 1.5px solid #e03131; }
+  .badge-warn { background: var(--warning-light); color: #B06000; font-size: clamp(10px,2.2vw,12px); padding: 3px 8px; border-radius: 50px; }
   .item-right { display: flex; align-items: center; gap: 8px; justify-content: flex-end; width: 100%; }
-  /* 수량 직접 입력 */
   .qty-input { font-size: 16px; font-weight: 700; color: var(--gray-900); width: 52px; text-align: center; border: 1.5px solid var(--gray-200); border-radius: var(--radius); padding: 4px 0; background: #fff; outline: none; }
   .qty-input:focus { border-color: var(--primary); }
   .qty-input.low { color: var(--danger); border-color: var(--danger); }
-  .qty-view { font-size: 16px; font-weight: 700; color: var(--gray-900); min-width: 32px; text-align: center; }
-  .qty-view.low { color: var(--danger); }
   .qty-btn { width: 36px; height: 36px; border-radius: 50%; background: #fff; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s; flex-shrink: 0; border: 1.5px solid; }
   .qty-btn-minus { color: var(--danger); border-color: var(--danger); }
   .qty-btn-minus:hover { background: var(--danger-light); }
   .qty-btn-plus { color: var(--success); border-color: var(--success); }
   .qty-btn-plus:hover { background: var(--success-light); }
-  .qty-btn-plus5 { width: auto; padding: 0 12px; height: 36px; border-radius: 50px; background: #fff; color: var(--success); border: 1.5px solid var(--success); font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+  .qty-btn-plus5 { width: auto; padding: 0 12px; height: 36px; border-radius: 50px; background: #fff; color: var(--success); border: 1.5px solid var(--success); font-size: 13px; font-weight: 600; cursor: pointer; }
   .qty-btn-plus5:hover { background: var(--success-light); }
 
-
-  /* 이력 탭 */
+  /* 이력 */
   .log-table-wrap { background: #fff; border: 1px solid var(--gray-200); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); }
   .log-table { width: 100%; border-collapse: collapse; font-size: 13px; }
   .log-table th { background: var(--gray-50); color: var(--gray-600); font-weight: 600; font-size: 12px; padding: 10px 16px; text-align: left; border-bottom: 1px solid var(--gray-200); }
@@ -87,45 +75,31 @@
   .chg-in { color: var(--success); font-weight: 600; }
   .chg-out { color: var(--danger); font-weight: 600; }
 
-  /* 모달 */
+  /* 모달 공통 */
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 1rem; }
-  .modal { background: #fff; border-radius: 16px; padding: 1.75rem; width: 400px; max-width: 100%; box-shadow: 0 8px 32px rgba(0,0,0,0.18); max-height: 90vh; overflow-y: auto; }
+  .modal { background: #fff; border-radius: 16px; padding: 1.75rem; width: 420px; max-width: 100%; box-shadow: 0 8px 32px rgba(0,0,0,0.18); max-height: 90vh; overflow-y: auto; }
   .modal h3 { font-size: 18px; font-weight: 600; margin-bottom: 1.25rem; }
-  .form-group { margin-bottom: 12px; }
-  .form-group label { display: block; font-size: 13px; color: var(--gray-600); font-weight: 500; margin-bottom: 4px; }
-  .form-group .form-label-row + .combo-wrap select,
-  .form-group .form-label-row + .combo-wrap input { margin-top: 0; }
-  .form-group input, .form-group select { width: 100%; padding: 9px 12px; border: 1px solid var(--gray-200); border-radius: var(--radius); font-size: 14px; color: var(--gray-900); outline: none; transition: border-color 0.15s; background: #fff; }
+  .form-group { margin-bottom: 14px; }
+  .form-group input, .form-group select { width: 100%; padding: 9px 12px; border: 1px solid var(--gray-200); border-radius: var(--radius); font-size: 14px; color: var(--gray-900); outline: none; background: #fff; }
   .form-group input:focus, .form-group select:focus { border-color: var(--primary); }
   .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .modal-btns { display: flex; gap: 10px; justify-content: flex-end; margin-top: 1.25rem; }
-  .combo-wrap { display: flex; flex-direction: column; gap: 5px; }
-  .form-label-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
-  .form-label-row label { margin-bottom: 0 !important; }
-  .inline-manage-btn { background: none; border: none; color: var(--primary); font-size: 12px; cursor: pointer; font-weight: 500; padding: 0; }
-  .inline-manage-btn:hover { text-decoration: underline; }
-  .inline-manager { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 10px; margin-top: 6px; }
-  .combo-wrap select { width: 100%; padding: 9px 12px; border: 1px solid var(--gray-200); border-radius: var(--radius); font-size: 14px; color: var(--gray-900); outline: none; background: #fff; }
-  .combo-wrap select:focus { border-color: var(--primary); }
-  .combo-wrap input { width: 100%; padding: 9px 12px; border: 1px solid var(--border-accent,var(--primary)); border-radius: var(--radius); font-size: 14px; color: var(--gray-900); outline: none; background: #fff; }
 
-  /* 옵션 관리 공통 */
-  .opt-tag-list { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; min-height: 36px; }
-  .opt-tag { font-size: 12px; padding: 4px 10px; border-radius: 20px; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; gap: 5px; }
-  .opt-tag-del { background: none; border: none; color: var(--primary); cursor: pointer; font-size: 15px; line-height: 1; padding: 0; }
-  .opt-add-row { display: flex; gap: 6px; margin-top: 4px; }
-  .opt-add-row input { flex: 1; padding: 7px 10px; border: 1px solid var(--gray-200); border-radius: var(--radius); font-size: 13px; outline: none; }
-  .opt-add-row input:focus { border-color: var(--primary); }
-  .opt-add-row button { padding: 7px 14px; background: var(--primary); color: #fff; border: none; border-radius: var(--radius); font-size: 13px; cursor: pointer; white-space: nowrap; }
+  /* 라벨 + 관리버튼 행 */
+  .field-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+  .field-label { font-size: 13px; color: var(--gray-600); font-weight: 500; }
+  .manage-btn { background: none; border: none; color: var(--primary); font-size: 12px; font-weight: 600; cursor: pointer; padding: 0; }
+  .manage-btn:hover { text-decoration: underline; }
 
-  /* 카테고리 관리 */
-  .cat-manage { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
-  .cat-tag { font-size: 12px; padding: 3px 10px; border-radius: 20px; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; gap: 4px; }
-  .cat-tag-del { background: none; border: none; color: var(--primary); cursor: pointer; font-size: 14px; line-height: 1; padding: 0; }
-  .cat-add-row { display: flex; gap: 6px; margin-top: 8px; }
-  .cat-add-row input { flex: 1; padding: 6px 10px; border: 1px solid var(--gray-200); border-radius: var(--radius); font-size: 13px; outline: none; }
-  .cat-add-row input:focus { border-color: var(--primary); }
-  .cat-add-row button { padding: 6px 12px; background: var(--primary); color: #fff; border: none; border-radius: var(--radius); font-size: 13px; cursor: pointer; }
+  /* 인라인 관리 패널 */
+  .inline-panel { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 10px; margin-top: 6px; margin-bottom: 6px; }
+  .tag-wrap { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; min-height: 26px; }
+  .itag { font-size: 12px; padding: 3px 10px; border-radius: 20px; background: #E8F0FE; color: #1a56c4; display: inline-flex; align-items: center; gap: 3px; }
+  .itag-del { background: none; border: none; color: #1a56c4; cursor: pointer; font-size: 14px; line-height: 1; padding: 0; }
+  .add-row { display: flex; gap: 6px; }
+  .add-row input { flex: 1; padding: 6px 10px; border: 1px solid var(--gray-200); border-radius: var(--radius); font-size: 13px; outline: none; background: #fff; }
+  .add-row input:focus { border-color: var(--primary); }
+  .add-row button { padding: 6px 14px; background: var(--primary); color: #fff; border: none; border-radius: 20px; font-size: 13px; cursor: pointer; white-space: nowrap; }
 
   .section-label { font-size: 12px; font-weight: 600; color: var(--gray-600); text-transform: uppercase; letter-spacing: 0.05em; margin: 1.25rem 0 0.6rem; }
   .empty { text-align: center; padding: 3rem 1rem; color: var(--gray-600); }
@@ -133,7 +107,6 @@
   .loading { text-align: center; padding: 3rem; color: var(--gray-600); font-size: 14px; }
   .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--gray-900); color: #fff; padding: 10px 22px; border-radius: 24px; font-size: 14px; opacity: 0; transition: opacity 0.2s; z-index: 200; pointer-events: none; white-space: nowrap; }
   .toast.show { opacity: 1; }
-
   @media (max-width: 500px) {
     .main { padding: 1rem; }
     .qty-btn-plus5 { display: none; }
@@ -153,8 +126,6 @@
     <span id="admin-badge" style="display:none;font-size:12px;background:#E6F4EA;color:#1e7e34;padding:5px 12px;border-radius:20px;font-weight:600;">관리자 모드</span>
     <button id="admin-login-btn" class="btn btn-outline" style="font-size:13px;padding:7px 14px;" onclick="openAdminModal()">🔒 관리자 로그인</button>
     <button id="admin-logout-btn" class="btn btn-outline" style="display:none;font-size:13px;padding:7px 14px;color:var(--danger);border-color:var(--danger);" onclick="adminLogout()">로그아웃</button>
-    <button id="cat-btn" class="btn btn-outline" style="display:none;font-size:13px;padding:7px 12px;" onclick="openCatModal()">카테고리</button>
-    <button id="options-btn" class="btn btn-outline" style="display:none;font-size:13px;padding:7px 12px;" onclick="openOptionsModal()">재질/규격/두께</button>
     <button id="add-btn" class="btn btn-primary" style="display:none;" onclick="openAddModal()">+ 품목 추가</button>
   </div>
 </div>
@@ -165,8 +136,6 @@
 </div>
 
 <div class="main">
-
-  <!-- 재고 현황 탭 -->
   <div id="tab-stock">
     <div class="toolbar">
       <input class="search-input" id="search" type="text" placeholder="🔍 품목명, 재질, 규격 검색..." oninput="renderItems()">
@@ -179,19 +148,13 @@
       </select>
       <button class="btn btn-outline" onclick="loadAll()">↻ 새로고침</button>
     </div>
-
-    <!-- 카테고리 필터 칩 -->
     <div class="cat-filter-row" id="cat-filter-row"></div>
-
     <div id="low-section" style="display:none">
       <div class="section-label">⚠ 재고 부족</div>
       <div id="low-list"></div>
     </div>
-
     <div id="item-list"><div class="loading">데이터를 불러오는 중...</div></div>
   </div>
-
-  <!-- 이력 탭 -->
   <div id="tab-log" style="display:none">
     <div class="section-label">입출고 이력 (최근 100건)</div>
     <div class="log-table-wrap">
@@ -201,7 +164,6 @@
       </table>
     </div>
   </div>
-
 </div>
 
 <!-- 관리자 로그인 모달 -->
@@ -210,7 +172,6 @@
     <h3>🔒 관리자 로그인</h3>
     <p style="font-size:13px;color:var(--gray-600);margin-bottom:1rem;">관리자 비밀번호를 입력하세요.</p>
     <div class="form-group">
-      <label>비밀번호</label>
       <input id="admin-pw" type="password" placeholder="비밀번호 입력" onkeydown="if(event.key==='Enter')submitAdminLogin()">
     </div>
     <div id="admin-error" style="display:none;font-size:13px;color:var(--danger);margin-top:6px;">비밀번호가 틀렸습니다.</div>
@@ -225,77 +186,99 @@
 <div class="modal-overlay" id="modal" style="display:none" onclick="if(event.target===this)closeModal()">
   <div class="modal">
     <h3 id="modal-title">품목 추가</h3>
+
+    <!-- 카테고리 -->
     <div class="form-group">
-      <label>카테고리 *</label>
-      <select id="f-cat" onchange="updateSpecOptions(this.value)">
+      <div class="field-header">
+        <span class="field-label">카테고리 *</span>
+        <button class="manage-btn" onclick="togglePanel('cat')">+ 관리</button>
+      </div>
+      <div class="inline-panel" id="panel-cat" style="display:none">
+        <div class="tag-wrap" id="tags-cat"></div>
+        <div class="add-row">
+          <input id="new-cat" type="text" placeholder="새 카테고리 (예: 형강)" onkeydown="if(event.key==='Enter')addTag('cat')">
+          <button onclick="addTag('cat')">추가</button>
+        </div>
+      </div>
+      <select id="f-cat" onchange="onCatChange(this.value)">
         <option value="">카테고리 선택</option>
       </select>
     </div>
+
+    <!-- 품목명 -->
     <div class="form-group">
-      <label>품목명 *</label>
+      <div class="field-header"><span class="field-label">품목명 *</span></div>
       <input id="f-name" type="text" placeholder="예: 강관 파이프">
     </div>
+
+    <!-- 재질 + 사이즈 -->
     <div class="form-row">
       <div class="form-group">
-        <label>재질</label>
-        <div class="combo-wrap">
-          <select id="f-material-sel" onchange="syncCombo('material')">
-            <option value="">선택</option>
-            <option>SS400</option>
-            <option>STS304</option>
-            <option>AL</option>
-            <option>PP</option>
-            <option>PE</option>
-            <option value="__custom__">직접 입력</option>
-          </select>
-          <input id="f-material" type="text" placeholder="직접 입력" style="display:none">
+        <div class="field-header">
+          <span class="field-label">재질</span>
+          <button class="manage-btn" onclick="togglePanel('material')">+ 관리</button>
         </div>
+        <div class="inline-panel" id="panel-material" style="display:none">
+          <div class="tag-wrap" id="tags-material"></div>
+          <div class="add-row">
+            <input id="new-material" type="text" placeholder="예: GC250" onkeydown="if(event.key==='Enter')addTag('material')">
+            <button onclick="addTag('material')">추가</button>
+          </div>
+        </div>
+        <select id="f-material">
+          <option value="">선택</option>
+        </select>
       </div>
       <div class="form-group">
-        <label>사이즈</label>
+        <div class="field-header"><span class="field-label">사이즈</span></div>
         <input id="f-size" type="text" placeholder="예: 6M">
       </div>
     </div>
+
+    <!-- 규격 + 두께 -->
     <div class="form-row">
       <div class="form-group">
-        <label>규격</label>
-        <div class="combo-wrap">
-          <select id="f-spec-sel" onchange="syncCombo('spec')">
-            <option value="">선택</option>
-          </select>
-          <input id="f-spec" type="text" placeholder="직접 입력">
+        <div class="field-header">
+          <span class="field-label">규격</span>
+          <button class="manage-btn" onclick="togglePanel('spec')">+ 관리</button>
         </div>
+        <div class="inline-panel" id="panel-spec" style="display:none">
+          <div class="tag-wrap" id="tags-spec"></div>
+          <div class="add-row">
+            <input id="new-spec" type="text" placeholder="카테고리 선택 후 입력" onkeydown="if(event.key==='Enter')addTag('spec')">
+            <button onclick="addTag('spec')">추가</button>
+          </div>
+        </div>
+        <select id="f-spec">
+          <option value="">선택</option>
+        </select>
       </div>
       <div class="form-group">
-        <label>두께</label>
-        <div class="combo-wrap">
-          <select id="f-thickness-sel" onchange="syncCombo('thickness')">
-            <option value="">선택</option>
-            <option>1.0t</option>
-            <option>1.2t</option>
-            <option>1.5t</option>
-            <option>2.0t</option>
-            <option>2.3t</option>
-            <option>2.5t</option>
-            <option>3.0t</option>
-            <option>3.2t</option>
-            <option>4.0t</option>
-            <option>4.5t</option>
-            <option>5.0t</option>
-            <option>6.0t</option>
-            <option value="__custom__">직접 입력</option>
-          </select>
-          <input id="f-thickness" type="text" placeholder="직접 입력" style="display:none">
+        <div class="field-header">
+          <span class="field-label">두께</span>
+          <button class="manage-btn" onclick="togglePanel('thickness')">+ 관리</button>
         </div>
+        <div class="inline-panel" id="panel-thickness" style="display:none">
+          <div class="tag-wrap" id="tags-thickness"></div>
+          <div class="add-row">
+            <input id="new-thickness" type="text" placeholder="예: 8.0t" onkeydown="if(event.key==='Enter')addTag('thickness')">
+            <button onclick="addTag('thickness')">추가</button>
+          </div>
+        </div>
+        <select id="f-thickness">
+          <option value="">선택</option>
+        </select>
       </div>
     </div>
+
+    <!-- 수량 + 최소재고 -->
     <div class="form-row">
       <div class="form-group">
-        <label>수량</label>
+        <div class="field-header"><span class="field-label">수량</span></div>
         <input id="f-qty" type="number" min="0" value="0">
       </div>
       <div class="form-group">
-        <label>최소 재고 (경고 기준)</label>
+        <div class="field-header"><span class="field-label">최소 재고 (경고 기준)</span></div>
         <input id="f-min" type="number" min="0" value="5">
       </div>
     </div>
@@ -307,495 +290,254 @@
   </div>
 </div>
 
-<!-- 재질/규격/두께 관리 모달 -->
-<div class="modal-overlay" id="options-modal" style="display:none" onclick="if(event.target===this)closeOptionsModal()">
-  <div class="modal" style="width:480px;max-height:85vh;overflow-y:auto;">
-    <h3>재질 / 규격 / 두께 관리</h3>
-
-    <!-- 탭 -->
-    <div style="display:flex;gap:0;border-bottom:1px solid var(--gray-200);margin-bottom:1rem;">
-      <button class="opt-tab active" onclick="switchOptTab('material')" id="tab-material" style="flex:1;padding:10px;border:none;background:none;cursor:pointer;font-size:14px;font-weight:500;border-bottom:2px solid var(--primary);color:var(--primary);">재질</button>
-      <button class="opt-tab" onclick="switchOptTab('spec')" id="tab-spec" style="flex:1;padding:10px;border:none;background:none;cursor:pointer;font-size:14px;color:var(--gray-600);border-bottom:2px solid transparent;">규격</button>
-      <button class="opt-tab" onclick="switchOptTab('thickness')" id="tab-thickness" style="flex:1;padding:10px;border:none;background:none;cursor:pointer;font-size:14px;color:var(--gray-600);border-bottom:2px solid transparent;">두께</button>
-    </div>
-
-    <!-- 재질 탭 -->
-    <div id="opt-material">
-      <p style="font-size:13px;color:var(--gray-600);margin-bottom:10px;">품목 추가 시 선택할 재질 목록을 관리해요.</p>
-      <div class="opt-tag-list" id="material-tag-list"></div>
-      <div class="opt-add-row">
-        <input id="material-new" type="text" placeholder="새 재질 입력 (예: GC250)">
-        <button onclick="addOption('material')">추가</button>
-      </div>
-    </div>
-
-    <!-- 규격 탭 -->
-    <div id="opt-spec" style="display:none">
-      <p style="font-size:13px;color:var(--gray-600);margin-bottom:10px;">카테고리별 규격 목록을 관리해요.</p>
-      <div class="form-group" style="margin-bottom:10px;">
-        <select id="spec-cat-sel" onchange="renderSpecTags()" style="width:100%;padding:8px 10px;border:1px solid var(--gray-200);border-radius:var(--radius);font-size:14px;background:#fff;outline:none;">
-          <option value="">카테고리 선택</option>
-        </select>
-      </div>
-      <div class="opt-tag-list" id="spec-tag-list"></div>
-      <div class="opt-add-row">
-        <input id="spec-new" type="text" placeholder="새 규격 입력 (예: 150A)">
-        <button onclick="addOption('spec')">추가</button>
-      </div>
-    </div>
-
-    <!-- 두께 탭 -->
-    <div id="opt-thickness" style="display:none">
-      <p style="font-size:13px;color:var(--gray-600);margin-bottom:10px;">품목 추가 시 선택할 두께 목록을 관리해요.</p>
-      <div class="opt-tag-list" id="thickness-tag-list"></div>
-      <div class="opt-add-row">
-        <input id="thickness-new" type="text" placeholder="새 두께 입력 (예: 8.0t)">
-        <button onclick="addOption('thickness')">추가</button>
-      </div>
-    </div>
-
-    <div class="modal-btns">
-      <button class="btn btn-primary" onclick="closeOptionsModal()">완료</button>
-    </div>
-  </div>
-</div>
-
-<!-- 카테고리 관리 모달 -->
-<div class="modal-overlay" id="cat-modal" style="display:none" onclick="if(event.target===this)closeCatModal()">
-  <div class="modal">
-    <h3>카테고리 관리</h3>
-    <p style="font-size:13px;color:var(--gray-600);margin-bottom:1rem;">품목 추가 시 선택할 카테고리를 관리해요.</p>
-    <div class="cat-manage" id="cat-manage-list"></div>
-    <div class="cat-add-row">
-      <input id="cat-new-input" type="text" placeholder="새 카테고리 입력 (예: 강관)">
-      <button onclick="addCategory()">추가</button>
-    </div>
-    <div class="modal-btns" style="margin-top:1.5rem;">
-      <button class="btn btn-primary" onclick="closeCatModal()">완료</button>
-    </div>
-  </div>
-</div>
-
 <div class="toast" id="toast"></div>
 
 <script>
-// ============================================================
-// ▼▼▼ 여기에 배포 후 받은 웹앱 URL을 붙여넣으세요 ▼▼▼
 const API_URL = 'https://script.google.com/macros/s/AKfycbyUWOuay_oKJkAeU4URWVk-qtTvutqeFTemiWFlqrIjjMv1Soi1DwBJQQF98EqcKXcf/exec';
-// ============================================================
 
-let items = [], logs = [], editId = null;
-let categories = ['강관', '각관', '앵글', '플레이트', '플랜지', '밸브', '볼트/너트'];
-let activeCat = '전체';
+let items = [], logs = [], editId = null, isAdmin = false, activeCat = '전체';
 
-// --- API ---
-async function api(action, extra = {}) {
+let optData = {
+  cat:       ['강관','각관','앵글','플레이트','플랜지','밸브','볼트/너트'],
+  material:  ['SS400','STS304','AL','PP','PE'],
+  thickness: ['1.0t','1.2t','1.5t','2.0t','2.3t','2.5t','3.0t','3.2t','4.0t','4.5t','5.0t','6.0t'],
+  spec: {
+    '강관':    ['15A(Ø21.7)','20A(Ø27.2)','25A(Ø34.0)','32A(Ø42.7)','40A(Ø48.6)','50A(Ø60.5)','65A(Ø76.3)','80A(Ø89.1)','100A(Ø114.3)','125A(Ø139.8)','150A(Ø165.2)','200A(Ø216.3)'],
+    '각관':    ['20x20','25x25','30x30','40x40','50x50','60x60','75x75','100x100','20x40','25x50','30x60','40x80','50x100'],
+    '앵글':    ['25x25','30x30','40x40','50x50','60x60','75x75','100x100'],
+    '플레이트': ['100x100','150x150','200x200','250x250','300x300'],
+    '플랜지':  ['15A','20A','25A','32A','40A','50A','65A','80A','100A','125A','150A','200A'],
+    '밸브':    ['15A','20A','25A','32A','40A','50A','65A','80A','100A'],
+    '볼트/너트':['M6','M8','M10','M12','M16','M20','M24'],
+  }
+};
+
+// API
+async function api(action, extra={}) {
   setSyncing(true);
   try {
-    const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action, ...extra }) });
+    const res = await fetch(API_URL, {method:'POST', body:JSON.stringify({action,...extra})});
     const data = await res.json();
     if (data.error) throw new Error(data.error);
     return data;
-  } finally {
-    setSyncing(false);
-  }
+  } finally { setSyncing(false); }
 }
-
 function setSyncing(v) {
-  document.getElementById('sync-dot').className = 'sync-dot' + (v ? ' loading' : '');
-  document.getElementById('sync-text').textContent = v ? '동기화 중...' : '연결됨';
+  document.getElementById('sync-dot').className = 'sync-dot'+(v?' loading':'');
+  document.getElementById('sync-text').textContent = v?'동기화 중...':'연결됨';
 }
 
-// --- 관리자 권한 ---
-let isAdmin = false;
-
+// 관리자
 function openAdminModal() {
-  document.getElementById('admin-pw').value = '';
-  document.getElementById('admin-error').style.display = 'none';
-  document.getElementById('admin-modal').style.display = 'flex';
-  setTimeout(() => document.getElementById('admin-pw').focus(), 100);
+  document.getElementById('admin-pw').value='';
+  document.getElementById('admin-error').style.display='none';
+  document.getElementById('admin-modal').style.display='flex';
+  setTimeout(()=>document.getElementById('admin-pw').focus(),100);
 }
-function closeAdminModal() {
-  document.getElementById('admin-modal').style.display = 'none';
-}
+function closeAdminModal() { document.getElementById('admin-modal').style.display='none'; }
 async function submitAdminLogin() {
   const pw = document.getElementById('admin-pw').value;
   try {
-    const r = await api('checkAdmin', { password: pw });
-    if (r.ok) {
-      isAdmin = true;
-      closeAdminModal();
-      applyAdminUI();
-      toast('관리자 모드로 전환됐어요.');
-    } else {
-      document.getElementById('admin-error').style.display = 'block';
-    }
-  } catch(e) {
-    document.getElementById('admin-error').style.display = 'block';
-  }
+    const r = await api('checkAdmin',{password:pw});
+    if (r.ok) { isAdmin=true; closeAdminModal(); applyAdminUI(); toast('관리자 모드로 전환됐어요.'); }
+    else document.getElementById('admin-error').style.display='block';
+  } catch(e) { document.getElementById('admin-error').style.display='block'; }
 }
-function adminLogout() {
-  isAdmin = false;
-  applyAdminUI();
-  toast('로그아웃됐어요.');
-}
+function adminLogout() { isAdmin=false; applyAdminUI(); toast('로그아웃됐어요.'); }
 function applyAdminUI() {
-  // 헤더 버튼
-  document.getElementById('admin-badge').style.display      = isAdmin ? '' : 'none';
-  document.getElementById('admin-login-btn').style.display  = isAdmin ? 'none' : '';
-  document.getElementById('admin-logout-btn').style.display = isAdmin ? '' : 'none';
-  document.getElementById('cat-btn').style.display          = isAdmin ? '' : 'none';
-  document.getElementById('options-btn').style.display      = isAdmin ? '' : 'none';
-  document.getElementById('add-btn').style.display          = isAdmin ? '' : 'none';
-  // 카드 내 버튼/입력창
-  document.querySelectorAll('.admin-only').forEach(el => el.style.display = isAdmin ? '' : 'none');
-  document.querySelectorAll('.qty-view').forEach(el => el.style.display   = isAdmin ? 'none' : '');
+  document.getElementById('admin-badge').style.display     = isAdmin?'':'none';
+  document.getElementById('admin-login-btn').style.display = isAdmin?'none':'';
+  document.getElementById('admin-logout-btn').style.display= isAdmin?'':'none';
+  document.getElementById('add-btn').style.display         = isAdmin?'':'none';
+  document.querySelectorAll('.admin-only').forEach(el=>el.style.display=isAdmin?'':'none');
 }
 
-// 옵션 데이터 (재질, 규격, 두께)
-let optMaterials  = ['SS400', 'STS304', 'AL', 'PP', 'PE'];
-let optThickness  = ['1.0t','1.2t','1.5t','2.0t','2.3t','2.5t','3.0t','3.2t','4.0t','4.5t','5.0t','6.0t'];
-let optSpecs = {
-  '강관':    ['15A(Ø21.7)','20A(Ø27.2)','25A(Ø34.0)','32A(Ø42.7)','40A(Ø48.6)','50A(Ø60.5)','65A(Ø76.3)','80A(Ø89.1)','100A(Ø114.3)','125A(Ø139.8)','150A(Ø165.2)','200A(Ø216.3)'],
-  '각관':    ['20x20','25x25','30x30','40x40','50x50','60x60','75x75','100x100','20x40','25x50','30x60','40x80','50x100'],
-  '앵글':    ['25x25','30x30','40x40','50x50','60x60','75x75','100x100'],
-  '플레이트': ['100x100','150x150','200x200','250x250','300x300'],
-  '플랜지':  ['15A','20A','25A','32A','40A','50A','65A','80A','100A','125A','150A','200A'],
-  '밸브':    ['15A','20A','25A','32A','40A','50A','65A','80A','100A'],
-  '볼트/너트':['M6','M8','M10','M12','M16','M20','M24'],
-};
-
-// 옵션 관리 모달
-function openOptionsModal() {
-  switchOptTab('material');
-  renderOptTags('material');
-  renderOptTags('thickness');
-  // 규격 카테고리 셀렉트 채우기
-  const sel = document.getElementById('spec-cat-sel');
-  sel.innerHTML = '<option value="">카테고리 선택</option>' +
-    categories.map(c => `<option>${c}</option>`).join('');
-  document.getElementById('options-modal').style.display = 'flex';
-}
-function closeOptionsModal() {
-  document.getElementById('options-modal').style.display = 'none';
-  // 드롭다운 갱신
-  updateMaterialSelect();
-  updateThicknessSelect();
-}
-function switchOptTab(tab) {
-  ['material','spec','thickness'].forEach(t => {
-    document.getElementById('opt-' + t).style.display = t === tab ? '' : 'none';
-    const btn = document.getElementById('tab-' + t);
-    btn.style.borderBottom = t === tab ? '2px solid var(--primary)' : '2px solid transparent';
-    btn.style.color = t === tab ? 'var(--primary)' : 'var(--gray-600)';
-    btn.style.fontWeight = t === tab ? '500' : '400';
-  });
-}
-function renderOptTags(field) {
-  const list = field === 'material' ? optMaterials : optThickness;
-  const el = document.getElementById(field + '-tag-list');
-  el.innerHTML = list.map((v, i) => `
-    <div class="opt-tag">
-      ${v}
-      <button class="opt-tag-del" onclick="deleteOption('${field}',${i})">×</button>
-    </div>`).join('');
-}
-function renderSpecTags() {
-  const cat = document.getElementById('spec-cat-sel').value;
-  const list = cat ? (optSpecs[cat] || []) : [];
-  const el = document.getElementById('spec-tag-list');
-  if (!cat) { el.innerHTML = '<span style="font-size:13px;color:var(--gray-600)">카테고리를 선택해주세요</span>'; return; }
-  el.innerHTML = list.map((v, i) => `
-    <div class="opt-tag">
-      ${v}
-      <button class="opt-tag-del" onclick="deleteSpecOption(${i})">×</button>
-    </div>`).join('');
-}
-function addOption(field) {
-  if (field === 'spec') {
-    const cat = document.getElementById('spec-cat-sel').value;
-    if (!cat) { toast('카테고리를 먼저 선택해주세요.'); return; }
-    const val = document.getElementById('spec-new').value.trim();
-    if (!val) return;
-    if (!optSpecs[cat]) optSpecs[cat] = [];
-    if (optSpecs[cat].includes(val)) { toast('이미 있는 규격이에요.'); return; }
-    optSpecs[cat].push(val);
-    document.getElementById('spec-new').value = '';
-    renderSpecTags();
-  } else {
-    const list = field === 'material' ? optMaterials : optThickness;
-    const val = document.getElementById(field + '-new').value.trim();
-    if (!val) return;
-    if (list.includes(val)) { toast('이미 있는 항목이에요.'); return; }
-    list.push(val);
-    document.getElementById(field + '-new').value = '';
-    renderOptTags(field);
-  }
-  toast('추가됐어요!');
-}
-function deleteOption(field, idx) {
-  if (field === 'material') optMaterials.splice(idx, 1);
-  else optThickness.splice(idx, 1);
-  renderOptTags(field);
-}
-function deleteSpecOption(idx) {
-  const cat = document.getElementById('spec-cat-sel').value;
-  if (!cat || !optSpecs[cat]) return;
-  optSpecs[cat].splice(idx, 1);
-  renderSpecTags();
-}
-
-// 인라인 관리 (품목 추가 팝업 안)
-function toggleInlineManager(field) {
-  const el = document.getElementById('mgr-' + field);
-  const isOpen = el.style.display !== 'none';
+// 패널 토글 (+ 관리 버튼)
+function togglePanel(field) {
+  const panel = document.getElementById('panel-'+field);
+  const isOpen = panel.style.display !== 'none';
   // 모두 닫기
-  ['material','spec','thickness'].forEach(f => {
-    document.getElementById('mgr-' + f).style.display = 'none';
+  ['cat','material','spec','thickness'].forEach(f=>{
+    const p = document.getElementById('panel-'+f);
+    if(p) p.style.display='none';
   });
-  if (!isOpen) {
-    el.style.display = '';
-    renderInlineTags(field);
-  }
+  if (!isOpen) { panel.style.display=''; renderTags(field); }
 }
-function renderInlineTags(field) {
-  if (field === 'spec') {
+
+// 태그 렌더링
+function renderTags(field) {
+  const el = document.getElementById('tags-'+field);
+  if (field==='spec') {
     const cat = document.getElementById('f-cat').value;
-    const list = cat ? (optSpecs[cat] || []) : [];
-    const el = document.getElementById('inline-spec-tags');
-    if (!cat) {
-      el.innerHTML = '<span style="font-size:12px;color:var(--gray-600)">카테고리를 먼저 선택해주세요</span>';
-      return;
-    }
-    el.innerHTML = list.map((v,i) => `
-      <div class="opt-tag">${v}
-        <button class="opt-tag-del" onclick="deleteInlineOption('spec',${i})">×</button>
-      </div>`).join('');
+    const list = cat ? (optData.spec[cat]||[]) : [];
+    if (!cat) { el.innerHTML='<span style="font-size:12px;color:var(--gray-600)">카테고리를 먼저 선택해주세요</span>'; return; }
+    el.innerHTML = list.map((v,i)=>`<span class="itag">${v}<button class="itag-del" onclick="delTag('spec',${i})">×</button></span>`).join('');
   } else {
-    const list = field === 'material' ? optMaterials : optThickness;
-    const el = document.getElementById('inline-' + field + '-tags');
-    el.innerHTML = list.map((v,i) => `
-      <div class="opt-tag">${v}
-        <button class="opt-tag-del" onclick="deleteInlineOption('${field}',${i})">×</button>
-      </div>`).join('');
+    const list = field==='cat' ? optData.cat : (field==='material' ? optData.material : optData.thickness);
+    el.innerHTML = list.map((v,i)=>`<span class="itag">${v}<button class="itag-del" onclick="delTag('${field}',${i})">×</button></span>`).join('');
   }
 }
-function addInlineOption(field) {
-  const inp = document.getElementById('inline-' + field + '-new');
+
+// 태그 추가
+function addTag(field) {
+  const inp = document.getElementById('new-'+field);
   const val = inp.value.trim();
   if (!val) return;
-  if (field === 'spec') {
+  if (field==='spec') {
     const cat = document.getElementById('f-cat').value;
     if (!cat) { toast('카테고리를 먼저 선택해주세요.'); return; }
-    if (!optSpecs[cat]) optSpecs[cat] = [];
-    if (optSpecs[cat].includes(val)) { toast('이미 있어요.'); return; }
-    optSpecs[cat].push(val);
-    updateSpecOptions(cat);
-  } else if (field === 'material') {
-    if (optMaterials.includes(val)) { toast('이미 있어요.'); return; }
-    optMaterials.push(val);
-    updateMaterialSelect();
+    if (!optData.spec[cat]) optData.spec[cat]=[];
+    if (optData.spec[cat].includes(val)) { toast('이미 있어요.'); return; }
+    optData.spec[cat].push(val);
+    refreshSelect('spec');
+  } else if (field==='cat') {
+    if (optData.cat.includes(val)) { toast('이미 있어요.'); return; }
+    optData.cat.push(val);
+    refreshSelect('cat');
+  } else if (field==='material') {
+    if (optData.material.includes(val)) { toast('이미 있어요.'); return; }
+    optData.material.push(val);
+    refreshSelect('material');
   } else {
-    if (optThickness.includes(val)) { toast('이미 있어요.'); return; }
-    optThickness.push(val);
-    updateThicknessSelect();
+    if (optData.thickness.includes(val)) { toast('이미 있어요.'); return; }
+    optData.thickness.push(val);
+    refreshSelect('thickness');
   }
-  inp.value = '';
-  renderInlineTags(field);
+  inp.value='';
+  renderTags(field);
   toast(`"${val}" 추가됐어요!`);
 }
-function deleteInlineOption(field, idx) {
-  if (field === 'material') { optMaterials.splice(idx,1); updateMaterialSelect(); }
-  else if (field === 'thickness') { optThickness.splice(idx,1); updateThicknessSelect(); }
-  else {
+
+// 태그 삭제
+function delTag(field, idx) {
+  if (field==='spec') {
     const cat = document.getElementById('f-cat').value;
-    if (cat && optSpecs[cat]) { optSpecs[cat].splice(idx,1); updateSpecOptions(cat); }
-  }
-  renderInlineTags(field);
-}
-function updateMaterialSelect() {
-  const sel = document.getElementById('f-material-sel');
-  const cur = sel ? sel.value : '';
-  if (sel) sel.innerHTML = '<option value="">선택</option>' +
-    optMaterials.map(m => `<option${m===cur?' selected':''}>${m}</option>`).join('') +
-    '<option value="__custom__">직접 입력</option>';
-}
-function updateThicknessSelect() {
-  const sel = document.getElementById('f-thickness-sel');
-  const cur = sel ? sel.value : '';
-  if (sel) sel.innerHTML = '<option value="">선택</option>' +
-    optThickness.map(t => `<option${t===cur?' selected':''}>${t}</option>`).join('') +
-    '<option value="__custom__">직접 입력</option>';
-}
-
-// 카테고리별 규격 목록 (optSpecs 사용)
-
-function updateSpecOptions(cat) {
-  const sel = document.getElementById('f-spec-sel');
-  const specs = cat ? (optSpecs[cat] || []) : [];
-  sel.innerHTML = '<option value="">선택</option>' +
-    specs.map(s => `<option>${s}</option>`).join('') +
-    '<option value="__custom__">직접 입력</option>';
-  document.getElementById('f-spec').value = '';
-  document.getElementById('f-spec').style.display = 'none';
-  sel.value = '';
-}
-
-function syncCombo(field) {
-  const sel = document.getElementById('f-' + field + '-sel');
-  const inp = document.getElementById('f-' + field);
-  if (!inp) return;
-  if (sel.value === '__custom__') {
-    inp.style.display = '';
-    inp.focus();
-    inp.value = '';
-  } else if (sel.value === '') {
-    inp.style.display = 'none';
-    inp.value = '';
+    if (cat && optData.spec[cat]) { optData.spec[cat].splice(idx,1); refreshSelect('spec'); }
+  } else if (field==='cat') {
+    const name = optData.cat[idx];
+    if (items.some(i=>i.category===name)) { toast(`"${name}"을 사용 중인 품목이 있어요.`); return; }
+    optData.cat.splice(idx,1); refreshSelect('cat');
+  } else if (field==='material') {
+    optData.material.splice(idx,1); refreshSelect('material');
   } else {
-    inp.style.display = 'none';
-    inp.value = sel.value;
+    optData.thickness.splice(idx,1); refreshSelect('thickness');
+  }
+  renderTags(field);
+}
+
+// 셀렉트 갱신
+function refreshSelect(field) {
+  if (field==='cat') {
+    const sel = document.getElementById('f-cat');
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">카테고리 선택</option>' +
+      optData.cat.map(c=>`<option value="${c}"${c===cur?' selected':''}>${c}</option>`).join('');
+    renderCatChips();
+  } else if (field==='material') {
+    const sel = document.getElementById('f-material');
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">선택</option>' +
+      optData.material.map(m=>`<option${m===cur?' selected':''}>${m}</option>`).join('');
+  } else if (field==='thickness') {
+    const sel = document.getElementById('f-thickness');
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">선택</option>' +
+      optData.thickness.map(t=>`<option${t===cur?' selected':''}>${t}</option>`).join('');
+  } else if (field==='spec') {
+    const cat = document.getElementById('f-cat').value;
+    const sel = document.getElementById('f-spec');
+    const cur = sel.value;
+    const list = cat ? (optData.spec[cat]||[]) : [];
+    sel.innerHTML = '<option value="">선택</option>' +
+      list.map(s=>`<option${s===cur?' selected':''}>${s}</option>`).join('');
   }
 }
 
-function getComboVal(field) {
-  const sel = document.getElementById('f-' + field + '-sel');
-  const inp = document.getElementById('f-' + field);
-  if (!inp) return '';
-  if (sel.value === '__custom__' || sel.value === '') return inp.value.trim();
-  return sel.value;
+function onCatChange(cat) {
+  refreshSelect('spec');
+  // 규격 패널 열려있으면 갱신
+  const p = document.getElementById('panel-spec');
+  if (p && p.style.display!=='none') renderTags('spec');
 }
 
-function setComboVal(field, val) {
-  const sel = document.getElementById('f-' + field + '-sel');
-  const inp = document.getElementById('f-' + field);
-  if (!inp) return;
-  // 드롭다운에 있는지 확인
-  const opt = Array.from(sel.options).find(o => o.value === val || o.text === val);
-  if (opt && val) {
-    sel.value = opt.value || val;
-    inp.style.display = 'none';
-    inp.value = val;
-  } else if (val) {
-    sel.value = '__custom__';
-    inp.style.display = '';
-    inp.value = val;
-  } else {
-    sel.value = '';
-    inp.style.display = 'none';
-    inp.value = '';
-  }
+// 모든 셀렉트 초기화
+function initAllSelects() {
+  refreshSelect('cat');
+  refreshSelect('material');
+  refreshSelect('thickness');
+  document.getElementById('f-spec').innerHTML = '<option value="">선택</option>';
 }
 
 async function loadAll() {
-  const [r1, r2] = await Promise.all([api('getItems'), api('getLogs')]);
-  items = r1.items || [];
-  logs  = r2.logs  || [];
+  const [r1,r2] = await Promise.all([api('getItems'),api('getLogs')]);
+  items = r1.items||[];
+  logs  = r2.logs||[];
   renderCatChips();
   renderItems();
   renderLog();
   applyAdminUI();
 }
 
-// --- 카테고리 칩 ---
 function renderCatChips() {
-  const usedCats = [...new Set(items.map(i => i.category).filter(Boolean))];
-  const allCats = ['전체', ...categories];
-  const row = document.getElementById('cat-filter-row');
-  row.innerHTML = allCats.map(c =>
-    `<button class="cat-chip${activeCat === c ? ' active' : ''}" onclick="setCat('${c}')">${c}</button>`
+  const allCats = ['전체',...optData.cat];
+  document.getElementById('cat-filter-row').innerHTML = allCats.map(c=>
+    `<button class="cat-chip${activeCat===c?' active':''}" onclick="setCat('${c}')">${c}</button>`
   ).join('');
 }
+function setCat(cat) { activeCat=cat; renderCatChips(); renderItems(); }
 
-function setCat(cat) {
-  activeCat = cat;
-  renderCatChips();
-  renderItems();
-}
-
-// --- 품목 렌더링 ---
 function renderItems() {
-  const q    = document.getElementById('search').value.toLowerCase();
+  const q = document.getElementById('search').value.toLowerCase();
   const sort = document.getElementById('sort-select').value;
-
-  let filtered = items.filter(i =>
-    i.qty > 0 &&
-    (activeCat === '전체' || i.category === activeCat) &&
-    (i.name.toLowerCase().includes(q) ||
-     (i.material||'').toLowerCase().includes(q) ||
-     (i.spec||'').toLowerCase().includes(q) ||
-     (i.category||'').toLowerCase().includes(q))
+  let filtered = items.filter(i=>
+    i.qty>0 &&
+    (activeCat==='전체'||i.category===activeCat) &&
+    (i.name.toLowerCase().includes(q)||(i.material||'').toLowerCase().includes(q)||
+     (i.spec||'').toLowerCase().includes(q)||(i.category||'').toLowerCase().includes(q))
   );
-
-  // 정렬
-  filtered.sort((a, b) => {
-    if (sort === 'cat')      return (a.category||'').localeCompare(b.category||'');
-    if (sort === 'spec')     return (a.spec||'').localeCompare(b.spec||'');
-    if (sort === 'qty-asc')  return a.qty - b.qty;
-    if (sort === 'qty-desc') return b.qty - a.qty;
+  filtered.sort((a,b)=>{
+    if(sort==='cat') return (a.category||'').localeCompare(b.category||'');
+    if(sort==='spec') return (a.spec||'').localeCompare(b.spec||'');
+    if(sort==='qty-asc') return a.qty-b.qty;
+    if(sort==='qty-desc') return b.qty-a.qty;
     return a.name.localeCompare(b.name);
   });
-
-  // 재고 부족
-  const low = filtered.filter(i => i.qty < i.min);
-  const lowSec = document.getElementById('low-section');
-  lowSec.style.display = low.length ? '' : 'none';
+  const low = filtered.filter(i=>i.qty<i.min);
+  document.getElementById('low-section').style.display = low.length?'':'none';
   document.getElementById('low-list').innerHTML = low.map(cardHTML).join('');
-
-  // 카테고리별 그룹 (카테고리순 정렬 시)
   const el = document.getElementById('item-list');
-  if (!filtered.length) {
-    el.innerHTML = '<div class="empty"><div class="empty-icon">📭</div>품목이 없습니다.</div>';
-    return;
-  }
-
-  if (sort === 'cat') {
-    const groups = {};
-    filtered.forEach(i => {
-      const key = i.category || '미분류';
-      if (!groups[key]) groups[key] = [];
-      groups[key].push(i);
-    });
-    el.innerHTML = Object.entries(groups).map(([cat, list]) => `
+  if (!filtered.length) { el.innerHTML='<div class="empty"><div class="empty-icon">📭</div>품목이 없습니다.</div>'; return; }
+  if (sort==='cat') {
+    const groups={};
+    filtered.forEach(i=>{ const k=i.category||'미분류'; if(!groups[k])groups[k]=[]; groups[k].push(i); });
+    el.innerHTML = Object.entries(groups).map(([cat,list])=>`
       <div class="cat-group">
-        <div class="cat-group-title">
-          ${cat} <span class="cat-count">${list.length}개 품목</span>
-        </div>
+        <div class="cat-group-title">${cat}<span class="cat-count">${list.length}개 품목</span></div>
         ${list.map(cardHTML).join('')}
-      </div>
-    `).join('');
+      </div>`).join('');
   } else {
     el.innerHTML = filtered.map(cardHTML).join('');
   }
 }
 
 function cardHTML(item) {
-  const isLow = item.qty < item.min;
-  const itemLogs = logs.filter(l => l.id === item.id).slice(0, 3);
-
-
+  const isLow = item.qty<item.min;
   return `
-  <div class="item-card${isLow ? ' low' : ''}">
+  <div class="item-card${isLow?' low':''}">
     <div class="item-body">
       <div class="badges">
-        ${item.category ? `<span class="badge badge-cat">${item.category}</span>` : ''}
-        ${item.spec     ? `<span class="badge">${item.spec}</span>`               : ''}
+        ${item.category?`<span class="badge badge-cat">${item.category}</span>`:''}
+        ${item.spec?`<span class="badge">${item.spec}</span>`:''}
         <span class="badge">${item.name}</span>
-        ${item.size     ? `<span class="badge">${item.size}</span>`               : ''}
-        ${item.material ? `<span class="badge">${item.material}</span>`           : ''}
-        ${isLow ? '<span class="badge badge-warn">⚠ 재고 부족</span>' : ''}
+        ${item.size?`<span class="badge">${item.size}</span>`:''}
+        ${item.material?`<span class="badge">${item.material}</span>`:''}
+        ${item.thickness?`<span class="badge">${item.thickness}</span>`:''}
+        ${isLow?'<span class="badge badge-warn">⚠ 재고 부족</span>':''}
       </div>
       <div class="item-right">
         <span class="badge-qty">현재수량 : ${item.qty}</span>
         <button class="qty-btn qty-btn-minus admin-only" style="display:none" onclick="changeQty('${item.id}',-1)">−</button>
-        <input
-          class="qty-input${isLow ? ' low' : ''} admin-only"
-          style="display:none"
-          type="number" min="0"
-          value="${item.qty}"
-          onchange="setQty('${item.id}', this)"
-          onclick="this.select()"
-        >
+        <input class="qty-input${isLow?' low':''} admin-only" style="display:none" type="number" min="0" value="${item.qty}" onchange="setQty('${item.id}',this)" onclick="this.select()">
         <button class="qty-btn qty-btn-plus admin-only" style="display:none" onclick="changeQty('${item.id}',1)">+</button>
         <button class="qty-btn qty-btn-plus5 admin-only" style="display:none" onclick="changeQty('${item.id}',5)">+5</button>
       </div>
@@ -803,187 +545,121 @@ function cardHTML(item) {
   </div>`;
 }
 
-// --- 수량 변경 ---
-async function changeQty(id, delta) {
-  const item = items.find(i => i.id === id);
-  if (!item) return;
-  if (item.qty + delta < 0) { toast('수량이 0 이하가 될 수 없습니다.'); return; }
-  const r = await api('changeQty', { id, delta });
-  item.qty = r.qty;
-  const time = new Date().toLocaleString('ko-KR', {month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
-  logs.unshift({ id, name: item.name, category: item.category, delta, qty: r.qty, time });
-  renderItems();
-  renderLog();
-  toast(`${item.name} ${delta > 0 ? '+' + delta : delta}개 변경 완료`);
+async function changeQty(id,delta) {
+  const item=items.find(i=>i.id===id); if(!item)return;
+  if(item.qty+delta<0){toast('수량이 0 이하가 될 수 없습니다.');return;}
+  const r=await api('changeQty',{id,delta});
+  item.qty=r.qty;
+  const time=new Date().toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
+  logs.unshift({id,name:item.name,category:item.category,delta,qty:r.qty,time});
+  renderItems(); renderLog();
+  toast(`${item.name} ${delta>0?'+'+delta:delta}개 변경 완료`);
 }
-
-// 수량 직접 입력
-async function setQty(id, input) {
-  const item = items.find(i => i.id === id);
-  if (!item) return;
-  const newVal = parseInt(input.value);
-  if (isNaN(newVal) || newVal < 0) { input.value = item.qty; return; }
-  const delta = newVal - item.qty;
-  if (delta === 0) return;
-  const r = await api('changeQty', { id, delta });
-  item.qty = r.qty;
-  const time = new Date().toLocaleString('ko-KR', {month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
-  logs.unshift({ id, name: item.name, category: item.category, delta, qty: r.qty, time });
-  renderItems();
-  renderLog();
+async function setQty(id,input) {
+  const item=items.find(i=>i.id===id); if(!item)return;
+  const newVal=parseInt(input.value);
+  if(isNaN(newVal)||newVal<0){input.value=item.qty;return;}
+  const delta=newVal-item.qty; if(delta===0)return;
+  const r=await api('changeQty',{id,delta});
+  item.qty=r.qty;
+  const time=new Date().toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
+  logs.unshift({id,name:item.name,category:item.category,delta,qty:r.qty,time});
+  renderItems(); renderLog();
   toast(`${item.name} 수량 → ${r.qty}개`);
 }
 
-// --- 이력 ---
 function renderLog() {
-  const tbody = document.getElementById('log-body');
-  if (!logs.length) { tbody.innerHTML = '<tr><td colspan="5" class="empty">이력이 없습니다.</td></tr>'; return; }
-  tbody.innerHTML = logs.map(l => `
+  const tbody=document.getElementById('log-body');
+  if(!logs.length){tbody.innerHTML='<tr><td colspan="5" class="empty">이력이 없습니다.</td></tr>';return;}
+  tbody.innerHTML=logs.map(l=>`
     <tr>
       <td>${l.time}</td>
       <td><span class="badge badge-cat" style="font-size:11px">${l.category||'-'}</span></td>
       <td>${l.name}</td>
-      <td class="${l.delta > 0 ? 'chg-in' : 'chg-out'}">${l.delta > 0 ? '+' : ''}${l.delta}</td>
+      <td class="${l.delta>0?'chg-in':'chg-out'}">${l.delta>0?'+':''}${l.delta}</td>
       <td>${l.qty}개</td>
     </tr>`).join('');
 }
 
-// --- 탭 ---
 function switchTab(tab) {
-  document.getElementById('tab-stock').style.display = tab === 'stock' ? '' : 'none';
-  document.getElementById('tab-log').style.display   = tab === 'log'   ? '' : 'none';
-  document.querySelectorAll('.tab').forEach((t, i) =>
-    t.classList.toggle('active', (i===0&&tab==='stock')||(i===1&&tab==='log'))
-  );
+  document.getElementById('tab-stock').style.display=tab==='stock'?'':'none';
+  document.getElementById('tab-log').style.display=tab==='log'?'':'none';
+  document.querySelectorAll('.tab').forEach((t,i)=>
+    t.classList.toggle('active',(i===0&&tab==='stock')||(i===1&&tab==='log')));
 }
 
-// --- 카테고리 관리 모달 ---
-function openCatModal() {
-  renderCatManageList();
-  document.getElementById('cat-modal').style.display = 'flex';
-}
-function closeCatModal() {
-  document.getElementById('cat-modal').style.display = 'none';
-  renderCatChips();
-  updateCatSelect();
-}
-function renderCatManageList() {
-  document.getElementById('cat-manage-list').innerHTML = categories.map((c, i) => `
-    <div class="cat-tag">
-      ${c}
-      <button class="cat-tag-del" onclick="deleteCategory(${i})" title="삭제">×</button>
-    </div>`).join('');
-}
-function addCategory() {
-  const input = document.getElementById('cat-new-input');
-  const val = input.value.trim();
-  if (!val) return;
-  if (categories.includes(val)) { toast('이미 있는 카테고리예요.'); return; }
-  categories.push(val);
-  input.value = '';
-  renderCatManageList();
-  toast(`"${val}" 카테고리 추가됨`);
-}
-function deleteCategory(idx) {
-  const name = categories[idx];
-  if (items.some(i => i.category === name)) {
-    toast(`"${name}"을 사용 중인 품목이 있어요.`); return;
-  }
-  categories.splice(idx, 1);
-  renderCatManageList();
-}
-function updateCatSelect() {
-  const sel = document.getElementById('f-cat');
-  const cur = sel.value;
-  sel.innerHTML = '<option value="">카테고리 선택</option>' +
-    categories.map(c => `<option value="${c}"${c===cur?' selected':''}>${c}</option>`).join('');
-}
-
-// --- 품목 추가/수정 모달 ---
 function openAddModal() {
-  editId = null;
-  document.getElementById('modal-title').textContent = '품목 추가';
-  updateCatSelect();
-  document.getElementById('f-cat').value = '';
-  updateSpecOptions('');
-  document.getElementById('f-name').value = '';
-  document.getElementById('f-size').value = '';
-  updateMaterialSelect();
-  updateThicknessSelect();
-  setComboVal('material', '');
-  setComboVal('spec', '');
-  setComboVal('thickness', '');
-  updateSpecOptions('');
-  document.getElementById('f-qty').value = 0;
-  document.getElementById('f-min').value = 5;
-  document.getElementById('modal').style.display = 'flex';
+  editId=null;
+  document.getElementById('modal-title').textContent='품목 추가';
+  initAllSelects();
+  document.getElementById('f-cat').value='';
+  document.getElementById('f-name').value='';
+  document.getElementById('f-size').value='';
+  document.getElementById('f-material').value='';
+  document.getElementById('f-spec').value='';
+  document.getElementById('f-thickness').value='';
+  document.getElementById('f-qty').value=0;
+  document.getElementById('f-min').value=5;
+  ['cat','material','spec','thickness'].forEach(f=>{
+    const p=document.getElementById('panel-'+f); if(p)p.style.display='none';
+  });
+  document.getElementById('modal').style.display='flex';
 }
 function openEditModal(id) {
-  const item = items.find(i => i.id === id);
-  if (!item) return;
-  editId = id;
-  document.getElementById('modal-title').textContent = '품목 수정';
-  updateCatSelect();
-  document.getElementById('f-cat').value  = item.category || '';
-  document.getElementById('f-name').value = item.name;
-  document.getElementById('f-size').value = item.size || '';
-  document.getElementById('f-qty').value  = item.qty;
-  document.getElementById('f-min').value  = item.min;
-  updateSpecOptions(item.category || '');
-  setComboVal('material', item.material || '');
-  setComboVal('spec', item.spec || '');
-  setComboVal('thickness', item.thickness || '');
-  document.getElementById('modal').style.display = 'flex';
+  const item=items.find(i=>i.id===id); if(!item)return;
+  editId=id;
+  document.getElementById('modal-title').textContent='품목 수정';
+  initAllSelects();
+  document.getElementById('f-cat').value=item.category||'';
+  onCatChange(item.category||'');
+  document.getElementById('f-name').value=item.name;
+  document.getElementById('f-size').value=item.size||'';
+  document.getElementById('f-material').value=item.material||'';
+  document.getElementById('f-spec').value=item.spec||'';
+  document.getElementById('f-thickness').value=item.thickness||'';
+  document.getElementById('f-qty').value=item.qty;
+  document.getElementById('f-min').value=item.min;
+  ['cat','material','spec','thickness'].forEach(f=>{
+    const p=document.getElementById('panel-'+f); if(p)p.style.display='none';
+  });
+  document.getElementById('modal').style.display='flex';
 }
-function closeModal() {
-  document.getElementById('modal').style.display = 'none';
-}
+function closeModal() { document.getElementById('modal').style.display='none'; }
+
 async function saveItem() {
-  const name = document.getElementById('f-name').value.trim();
-  if (!name) { toast('품목명을 입력해 주세요.'); return; }
-  const item = {
+  const name=document.getElementById('f-name').value.trim();
+  if(!name){toast('품목명을 입력해 주세요.');return;}
+  const item={
     name,
     category:  document.getElementById('f-cat').value,
-    material:  getComboVal('material'),
+    material:  document.getElementById('f-material').value,
     size:      document.getElementById('f-size').value.trim(),
-    spec:      getComboVal('spec'),
-    thickness: getComboVal('thickness'),
-    qty:       parseInt(document.getElementById('f-qty').value) || 0,
-    min:       parseInt(document.getElementById('f-min').value) || 5,
+    spec:      document.getElementById('f-spec').value,
+    thickness: document.getElementById('f-thickness').value,
+    qty:       parseInt(document.getElementById('f-qty').value)||0,
+    min:       parseInt(document.getElementById('f-min').value)||5,
   };
-  // 중복 체크 (추가 시에만, 카테고리+품목명+규격 동일하면 중복)
-  if (!editId) {
-    const dup = items.find(i =>
-      i.name === item.name &&
-      (i.category||'') === (item.category||'') &&
-      (i.spec||'') === (item.spec||'') &&
-      (i.thickness||'') === (item.thickness||'')
-    );
-    if (dup) {
-      toast(`이미 등록된 품목이에요! (${item.category ? item.category+' · ' : ''}${item.name}${item.spec ? ' · '+item.spec : ''})`);
-      return;
-    }
+  if(!editId) {
+    const dup=items.find(i=>i.name===item.name&&(i.category||'')===(item.category||'')&&(i.spec||'')===(item.spec||'')&&(i.thickness||'')===(item.thickness||''));
+    if(dup){toast(`이미 등록된 품목이에요!`);return;}
   }
-  if (editId) {
-    await api('updateItem', { item: { ...item, id: editId } });
-    const idx = items.findIndex(i => i.id === editId);
-    items[idx] = { ...items[idx], ...item };
+  if(editId) {
+    await api('updateItem',{item:{...item,id:editId}});
+    const idx=items.findIndex(i=>i.id===editId);
+    items[idx]={...items[idx],...item};
     toast('품목이 수정되었습니다.');
   } else {
-    const r = await api('addItem', { item });
-    items.push({ id: r.id, ...item });
+    const r=await api('addItem',{item});
+    items.push({id:r.id,...item});
     toast('품목이 추가되었습니다.');
   }
-  closeModal();
-  renderCatChips();
-  renderItems();
+  closeModal(); renderCatChips(); renderItems();
 }
 
 function toast(msg) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 2500);
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),2500);
 }
 
 loadAll();
