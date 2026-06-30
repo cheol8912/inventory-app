@@ -54,13 +54,14 @@
   /* 품목 카드 */
   .item-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; padding: 14px 20px; margin-bottom: 8px; box-shadow: var(--shadow); }
   .item-card.low { border-color: var(--warning); background: var(--warning-light); }
-  .item-body { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-  .badges { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; flex: 1; }
+  .item-body { display: flex; align-items: center; gap: 10px; flex-wrap: nowrap; overflow: hidden; }
+  .badges { display: flex; gap: 6px; flex-wrap: nowrap; align-items: center; flex: 1; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; }
+  .badges::-webkit-scrollbar { display: none; }
   /* 배지 - 회색 기본 */
-  .badge { font-size: 13px; font-weight: 500; padding: 5px 14px; border-radius: 50px; background: var(--gray-100); color: var(--gray-900); display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; }
+  .badge { font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 50px; background: var(--gray-100); color: var(--gray-900); display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; flex-shrink: 0; }
   .badge-cat { background: #E8F0FE; color: #1a56c4; }
-  .badge-qty { background: var(--gray-100); color: #e03131; font-weight: 700; font-size: 15px; padding: 6px 16px; border-radius: 50px; white-space: nowrap; border: 1.5px solid #e03131; }
-  .badge-warn { background: var(--warning-light); color: #B06000; font-size: 12px; padding: 3px 10px; border-radius: 50px; }
+  .badge-qty { background: var(--gray-100); color: #e03131; font-weight: 700; font-size: 13px; padding: 4px 12px; border-radius: 50px; white-space: nowrap; border: 1.5px solid #e03131; flex-shrink: 0; }
+  .badge-warn { background: var(--warning-light); color: #B06000; font-size: 11px; padding: 3px 8px; border-radius: 50px; flex-shrink: 0; }
   .item-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; margin-left: auto; }
   /* 수량 직접 입력 */
   .qty-input { font-size: 16px; font-weight: 700; color: var(--gray-900); width: 52px; text-align: center; border: 1.5px solid var(--gray-200); border-radius: var(--radius); padding: 4px 0; background: #fff; outline: none; }
