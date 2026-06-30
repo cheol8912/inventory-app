@@ -43,26 +43,40 @@
   .cat-group { margin-bottom: 1.5rem; }
   .cat-group-title { font-size: 13px; font-weight: 600; color: var(--gray-600); padding: 6px 12px; background: var(--gray-100); border-radius: var(--radius); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
   .cat-count { font-size: 11px; background: var(--gray-200); color: var(--gray-600); padding: 1px 7px; border-radius: 10px; }
-  .item-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; padding: 14px 20px; margin-bottom: 8px; box-shadow: var(--shadow); }
+  /* 카드 */
+  .item-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; padding: 10px 12px; margin-bottom: 6px; box-shadow: var(--shadow); }
   .item-card.low { border-color: var(--warning); background: var(--warning-light); }
-  .item-body { display: flex; flex-direction: column; gap: 6px; }
-  .badges { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; width: 100%; }
-  .badge { font-size: clamp(10px,2.5vw,13px); font-weight: 500; padding: clamp(3px,1vw,5px) clamp(7px,2vw,12px); border-radius: 50px; background: var(--gray-100); color: var(--gray-900); display: inline-flex; align-items: center; white-space: nowrap; }
-  .badge-cat { background: #E8F0FE; color: #1a56c4; }
-  .badge-qty { background: var(--gray-100); color: #e03131; font-weight: 700; font-size: clamp(11px,2.8vw,14px); padding: clamp(3px,1vw,5px) clamp(8px,2.5vw,14px); border-radius: 50px; white-space: nowrap; border: 1.5px solid #e03131; }
-  .badge-warn { background: var(--warning-light); color: #B06000; font-size: clamp(10px,2.2vw,12px); padding: 3px 8px; border-radius: 50px; }
-  .badge-bad { background: #fff; color: #e03131; font-size: clamp(10px,2.5vw,13px); font-weight: 700; padding: clamp(3px,1vw,5px) clamp(7px,2vw,12px); border-radius: 50px; border: 1.5px solid #e03131; white-space: nowrap; }
-  .item-right { display: flex; align-items: center; gap: 8px; justify-content: flex-end; width: 100%; }
-  .qty-input { font-size: 16px; font-weight: 700; color: var(--gray-900); width: 52px; text-align: center; border: 1.5px solid var(--gray-200); border-radius: var(--radius); padding: 4px 0; background: #fff; outline: none; }
-  .qty-input:focus { border-color: var(--primary); }
-  .qty-input.low { color: var(--danger); border-color: var(--danger); }
-  .qty-btn { width: 36px; height: 36px; border-radius: 50%; background: #fff; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s; flex-shrink: 0; border: 1.5px solid; }
+  .item-body { display: flex; align-items: center; gap: 16px; min-height: 44px; }
+  /* 좌측: flex로 배지 크기 자연스럽게 */
+  .item-left { flex: 1; min-width: 0; display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; }
+  .item-field { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  /* 악성 배지 */
+  .item-field.f-bad { display: inline-flex; align-items: center; justify-content: center; color: #e03131; font-weight: 700; border: 1.5px solid #e03131; border-radius: 50px; padding: 3px 10px; font-size: 13px; background: #fff; white-space: nowrap; }
+  /* 일반 배지 (라벨 단추 모양 유지) */
+  .item-field.f-badge { display: inline-flex; align-items: center; justify-content: center; background: var(--gray-100); color: var(--gray-900); border-radius: 50px; padding: 3px 8px; font-size: 13px; font-weight: 500; white-space: nowrap; }
+  .item-field.f-cat { background: #E8F0FE; color: #1a56c4; border-radius: 50px; padding: 3px 8px; font-size: 13px; font-weight: 500; white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; }
+  .item-warn { font-size: 12px; color: #B06000; background: var(--warning-light); border-radius: 50px; padding: 2px 8px; white-space: nowrap; }
+  /* 우측: 수량 컨트롤 - 고정 너비로 헤더와 맞춤 */
+  .item-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; width: 160px; justify-content: flex-end; }
+  .badge-qty { color: #e03131; font-weight: 700; font-size: 14px; padding: 6px 14px; border-radius: 50px; white-space: nowrap; border: 1.5px solid #e03131; background: #fff; }
+  .badge-qty.pending { border-color: var(--warning); color: #7a5c00; }
+  /* −/+ 세로 배치 */
+  .qty-pm-wrap { display: flex; flex-direction: column; gap: 3px; }
+  .qty-btn { width: 28px; height: 28px; border-radius: 50%; background: #fff; font-size: 17px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s; flex-shrink: 0; border: 1.5px solid; line-height: 1; padding: 0; }
   .qty-btn-minus { color: var(--danger); border-color: var(--danger); }
   .qty-btn-minus:hover { background: var(--danger-light); }
   .qty-btn-plus { color: var(--success); border-color: var(--success); }
   .qty-btn-plus:hover { background: var(--success-light); }
-  .qty-btn-plus5 { width: auto; padding: 0 12px; height: 36px; border-radius: 50px; background: #fff; color: var(--success); border: 1.5px solid var(--success); font-size: 13px; font-weight: 600; cursor: pointer; }
-  .qty-btn-plus5:hover { background: var(--success-light); }
+  .qty-btn-minus.active-minus { background: var(--danger); color: #fff; }
+  .qty-btn-plus.active-plus   { background: var(--success); color: #fff; }
+  /* 수량 입력창 */
+  .qty-direct-input { width: 100px; padding: 10px 6px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 14px; font-weight: 700; text-align: center; outline: none; color: var(--gray-900); }
+  .qty-direct-input:focus { border-color: var(--primary); }
+  /* 확인/취소 */
+  .qty-confirm-btn { height: 36px; padding: 0 16px; background: var(--success); color: #fff; border: none; border-radius: 50px; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+  .qty-confirm-btn:hover { background: #2d9246; }
+  .qty-cancel-btn { width: 32px; height: 32px; border-radius: 50%; background: #fff; color: var(--gray-600); border: 1.5px solid var(--gray-200); font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .qty-cancel-btn:hover { background: var(--gray-100); }
   .log-table-wrap { background: #fff; border: 1px solid var(--gray-200); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); }
   .log-table { width: 100%; border-collapse: collapse; font-size: 13px; }
   .log-table th { background: var(--gray-50); color: var(--gray-600); font-weight: 600; font-size: 12px; padding: 10px 16px; text-align: left; border-bottom: 1px solid var(--gray-200); }
@@ -438,7 +452,11 @@ function applyAdminUI() {
   document.getElementById('admin-login-btn').style.display  = isAdmin ? 'none' : '';
   document.getElementById('admin-logout-btn').style.display = isAdmin ? '' : 'none';
   document.getElementById('add-btn').style.display          = isAdmin ? '' : 'none';
-  document.querySelectorAll('.admin-only').forEach(el => el.style.display = isAdmin ? '' : 'none');
+  document.querySelectorAll('.admin-only').forEach(el => {
+    // qty-adj-panel은 display:none 유지 (토글로 열림), 나머지만 보임
+    if (el.classList.contains('qty-adj-panel')) return;
+    el.style.display = isAdmin ? '' : 'none';
+  });
 }
 
 // ============================================================
@@ -600,7 +618,10 @@ function renderItems() {
   document.getElementById('low-section').style.display = low.length ? '' : 'none';
   document.getElementById('low-list').innerHTML = low.map(cardHTML).join('');
   const el = document.getElementById('item-list');
-  if (!filtered.length) { el.innerHTML='<div class="empty"><div class="empty-icon">📭</div>품목이 없습니다.</div>'; return; }
+  if (!filtered.length) {
+    el.innerHTML='<div class="empty"><div class="empty-icon">📭</div>품목이 없습니다.</div>';
+    return;
+  }
   if (sort === 'cat') {
     const groups = {};
     filtered.forEach(i => { const k=i.category||'미분류'; if(!groups[k])groups[k]=[]; groups[k].push(i); });
@@ -612,57 +633,135 @@ function renderItems() {
   } else {
     el.innerHTML = filtered.map(cardHTML).join('');
   }
+  applyAdminUI();
 }
 
 function cardHTML(item) {
   const isLow = item.qty < item.min;
+  const id    = item.id;
+  // 좌측 그리드: 특징 | 카테고리 | 규격 | 품목명 | 사이즈 | 재질 | 두께
+  const leftHTML = `
+    <span class="item-field">${item.isBad ? `<span class="item-field f-bad">악성</span>` : ''}</span>
+    <span class="item-field f-cat">${item.category || ''}</span>
+    <span class="item-field f-badge">${item.spec || ''}</span>
+    <span class="item-field f-badge">${item.name || ''}</span>
+    <span class="item-field f-badge">${item.size || ''}</span>
+    <span class="item-field f-badge">${item.material || ''}</span>
+    <span class="item-field f-badge">${item.thickness || ''}</span>
+  `;
+
   return `
-  <div class="item-card${isLow?' low':''}">
+  <div class="item-card${isLow?' low':''}" id="card-${id}">
     <div class="item-body">
-      <div class="badges">
-        ${item.isBad?`<span class="badge-bad">악성</span>`:''}
-        ${item.category?`<span class="badge badge-cat">${item.category}</span>`:''}
-        ${item.spec?`<span class="badge">${item.spec}</span>`:''}
-        <span class="badge">${item.name}</span>
-        ${item.size?`<span class="badge">${item.size}</span>`:''}
-        ${item.material?`<span class="badge">${item.material}</span>`:''}
-        ${item.thickness?`<span class="badge">${item.thickness}</span>`:''}
-        ${isLow?'<span class="badge badge-warn">⚠ 재고 부족</span>':''}
-      </div>
+      <div class="item-left">${leftHTML}</div>
       <div class="item-right">
-        <span class="badge-qty">현재수량 : ${item.qty}</span>
-        <button class="qty-btn qty-btn-minus admin-only" style="display:none" onclick="changeQty('${item.id}',-1)">−</button>
-        <input class="qty-input${isLow?' low':''} admin-only" style="display:none" type="number" min="0" value="${item.qty}" onchange="setQty('${item.id}',this)" onclick="this.select()">
-        <button class="qty-btn qty-btn-plus admin-only" style="display:none" onclick="changeQty('${item.id}',1)">+</button>
-        <button class="qty-btn qty-btn-plus5 admin-only" style="display:none" onclick="changeQty('${item.id}',5)">+5</button>
+        <span class="badge-qty" id="qty-badge-${id}">현재수량 : ${item.qty.toLocaleString()}</span>
+        ${isLow ? '<span class="item-warn">⚠ 부족</span>' : ''}
+        <div class="qty-pm-wrap admin-only" style="display:none">
+          <button class="qty-btn qty-btn-minus active-minus" id="sign-minus-${id}" onclick="toggleSign('${id}','minus')">−</button>
+          <button class="qty-btn qty-btn-plus" id="sign-plus-${id}" onclick="toggleSign('${id}','plus')">+</button>
+        </div>
+        <input class="qty-direct-input admin-only" id="qty-input-${id}" style="display:none" type="number" min="0" placeholder="수량" oninput="onDirectInput('${id}',${item.qty})">
+        <button class="qty-confirm-btn admin-only" id="qty-confirm-${id}" style="display:none" onclick="confirmQty('${id}')">✔ 확인</button>
       </div>
     </div>
   </div>`;
 }
 
+// 임시 수량 저장소
+const pendingQty = {};
+
+// −/+ 버튼: 방향(빼기/더하기) 토글
+function toggleSign(id, sign) {
+  const minusBtn = document.getElementById('sign-minus-'+id);
+  const plusBtn  = document.getElementById('sign-plus-'+id);
+  const card     = document.getElementById('card-'+id);
+  card.dataset.sign = sign;
+  if (sign === 'minus') {
+    minusBtn.classList.add('active-minus');
+    plusBtn.classList.remove('active-plus');
+  } else {
+    plusBtn.classList.add('active-plus');
+    minusBtn.classList.remove('active-minus');
+  }
+  // 입력값 있으면 즉시 미리보기 갱신
+  const item = items.find(i => i.id===id); if (!item) return;
+  onDirectInput(id, item.qty);
+}
+
+// 입력창 직접 타이핑
+function onDirectInput(id, baseQty) {
+  const item  = items.find(i => i.id===id); if (!item) return;
+  const card  = document.getElementById('card-'+id);
+  const sign  = card.dataset.sign || 'minus';
+  const val   = parseInt(document.getElementById('qty-input-'+id).value);
+  if (isNaN(val) || val < 0) return;
+  const delta = sign === 'minus' ? -val : val;
+  const next  = item.qty + delta;
+  if (next < 0) {
+    document.getElementById('qty-badge-'+id).textContent = `⚠ 수량 부족!`;
+    document.getElementById('qty-badge-'+id).className = 'badge-qty pending';
+    pendingQty[id] = null;
+    document.getElementById('qty-confirm-'+id).style.display = 'none';
+    document.getElementById('qty-cancel-'+id).style.display  = val > 0 ? '' : 'none';
+    return;
+  }
+  pendingQty[id] = { delta, localQty: next };
+  const badge = document.getElementById('qty-badge-'+id);
+  if (val === 0) {
+    badge.textContent = `현재수량 : ${item.qty.toLocaleString()}`;
+    badge.className   = 'badge-qty';
+    document.getElementById('qty-confirm-'+id).style.display = 'none';
+    document.getElementById('qty-cancel-'+id).style.display  = 'none';
+  } else {
+    badge.textContent = `${item.qty.toLocaleString()} → ${next.toLocaleString()}`;
+    badge.className   = 'badge-qty pending';
+    document.getElementById('qty-confirm-'+id).style.display = '';
+    document.getElementById('qty-cancel-'+id).style.display  = '';
+  }
+}
+
+// 확인 → 서버 저장
+async function confirmQty(id) {
+  const item = items.find(i => i.id===id); if (!item) return;
+  const p    = pendingQty[id];
+  if (!p || p.delta === 0) return;
+  const r = await api('changeQty', {id, delta: p.delta});
+  item.qty = r.qty;
+  const time = new Date().toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
+  logs.unshift({id, name:item.name, category:item.category, delta:p.delta, qty:r.qty, time});
+  delete pendingQty[id];
+  saveCache({items, logs});
+  renderItems();
+  applyAdminUI();
+  renderLog();
+  toast(`${item.name} ${p.delta>0?'+'+p.delta:p.delta}개 저장 완료`);
+}
+
+// 취소 → 원복
+function cancelQty(id) {
+  const item = items.find(i => i.id===id); if (!item) return;
+  delete pendingQty[id];
+  const badge = document.getElementById('qty-badge-'+id);
+  const input = document.getElementById('qty-input-'+id);
+  if (badge) { badge.textContent=`현재수량 : ${item.qty.toLocaleString()}`; badge.className='badge-qty'; }
+  if (input) input.value = '';
+  document.getElementById('qty-confirm-'+id).style.display = 'none';
+  document.getElementById('qty-cancel-'+id).style.display  = 'none';
+  // 방향 초기화
+  toggleSign(id, 'minus');
+}
+
 async function changeQty(id, delta) {
   const item = items.find(i => i.id===id); if (!item) return;
-  if (item.qty+delta < 0) { toast('수량이 0 이하가 될 수 없습니다.'); return; }
   const r = await api('changeQty', {id, delta});
   item.qty = r.qty;
   const time = new Date().toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
   logs.unshift({id, name:item.name, category:item.category, delta, qty:r.qty, time});
   saveCache({items, logs});
-  renderItems(); renderLog();
-  toast(`${item.name} ${delta>0?'+'+delta:delta}개 변경 완료`);
-}
-async function setQty(id, input) {
-  const item = items.find(i => i.id===id); if (!item) return;
-  const newVal = parseInt(input.value);
-  if (isNaN(newVal) || newVal < 0) { input.value=item.qty; return; }
-  const delta = newVal - item.qty; if (delta===0) return;
-  const r = await api('changeQty', {id, delta});
-  item.qty = r.qty;
-  const time = new Date().toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
-  logs.unshift({id, name:item.name, category:item.category, delta, qty:r.qty, time});
-  saveCache({items, logs});
-  renderItems(); renderLog();
-  toast(`${item.name} 수량 → ${r.qty}개`);
+  renderItems();
+  applyAdminUI();
+  renderLog();
 }
 
 function renderLog() {
