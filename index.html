@@ -383,17 +383,13 @@ async function loadAll(forceRefresh=false) {
 
 async function fetchFresh() {
   try {
-    const [r1, r2, r3] = await Promise.all([
-      api('getItems'),
-      api('getLogs'),
-      api('getOptions'),
-    ]);
-    items = r1.items || [];
-    logs  = r2.logs  || [];
+    // 3번 호출 → 1번으로 통합
+    const r = await api('getAll');
+    items = r.items || [];
+    logs  = r.logs  || [];
 
-    // 옵션 데이터: Sheets 우선, 없으면 캐시, 없으면 기본값
-    if (r3.optData) {
-      optData = r3.optData;
+    if (r.optData) {
+      optData = r.optData;
       saveOptCache(optData);
     } else {
       const oc = loadOptCache();
@@ -406,7 +402,6 @@ async function fetchFresh() {
     renderLog();
     applyAdminUI();
   } catch(e) {
-    // 네트워크 오류 시 캐시라도 표시
     const cache = loadCache();
     if (cache && cache.items) {
       items = cache.items;
