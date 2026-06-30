@@ -48,8 +48,8 @@
   .item-card.low { border-color: var(--warning); background: var(--warning-light); }
   .item-body { display: flex; align-items: center; gap: 8px; min-height: 44px; flex-wrap: wrap; }
   /* 좌측: flex로 배지 크기 자연스럽게 */
-  .item-left { flex: 1; min-width: 0; display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; }
-  .item-field { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .item-left { flex: 1; min-width: 0; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .item-field { white-space: nowrap; }
   /* 악성 배지 */
   .item-field.f-bad { display: inline-flex; align-items: center; justify-content: center; color: #e03131; font-weight: 700; border: 1.5px solid #e03131; border-radius: 50px; padding: 3px 10px; font-size: 13px; background: #fff; white-space: nowrap; }
   /* 일반 배지 (라벨 단추 모양 유지) */
