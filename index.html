@@ -75,12 +75,7 @@
   .qty-btn-plus:hover { background: var(--success-light); }
   .qty-btn-plus5 { width: auto; padding: 0 12px; height: 36px; border-radius: 50px; background: #fff; color: var(--success); border: 1.5px solid var(--success); font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
   .qty-btn-plus5:hover { background: var(--success-light); }
-  .mini-log { margin-top: 10px; border-top: 1px solid var(--gray-200); padding-top: 8px; }
-  .mini-log-title { font-size: 11px; color: var(--gray-600); margin-bottom: 4px; font-weight: 500; }
-  .mini-log-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--gray-600); padding: 2px 0; }
-  .log-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-  .log-dot.in { background: var(--success); }
-  .log-dot.out { background: var(--danger); }
+
 
   /* 이력 탭 */
   .log-table-wrap { background: #fff; border: 1px solid var(--gray-200); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); }
@@ -426,15 +421,7 @@ function renderItems() {
 function cardHTML(item) {
   const isLow = item.qty < item.min;
   const itemLogs = logs.filter(l => l.id === item.id).slice(0, 3);
-  const miniLog = itemLogs.length ? `
-    <div class="mini-log">
-      <div class="mini-log-title">최근 이력</div>
-      ${itemLogs.map(l => `
-        <div class="mini-log-item">
-          <div class="log-dot ${l.delta > 0 ? 'in' : 'out'}"></div>
-          ${l.time} · ${l.delta > 0 ? '+' : ''}${l.delta}개 → 잔여 ${l.qty}개
-        </div>`).join('')}
-    </div>` : '';
+
 
   return `
   <div class="item-card${isLow ? ' low' : ''}">
@@ -462,7 +449,6 @@ function cardHTML(item) {
         <button class="qty-btn qty-btn-plus5 admin-only" style="display:none" onclick="changeQty('${item.id}',5)">+5</button>
       </div>
     </div>
-    ${miniLog}
   </div>`;
 }
 
