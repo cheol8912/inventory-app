@@ -93,10 +93,30 @@
   .modal h3 { font-size: 18px; font-weight: 600; margin-bottom: 1.25rem; }
   .form-group { margin-bottom: 12px; }
   .form-group label { display: block; font-size: 13px; color: var(--gray-600); font-weight: 500; margin-bottom: 4px; }
+  .form-group .form-label-row + .combo-wrap select,
+  .form-group .form-label-row + .combo-wrap input { margin-top: 0; }
   .form-group input, .form-group select { width: 100%; padding: 9px 12px; border: 1px solid var(--gray-200); border-radius: var(--radius); font-size: 14px; color: var(--gray-900); outline: none; transition: border-color 0.15s; background: #fff; }
   .form-group input:focus, .form-group select:focus { border-color: var(--primary); }
   .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .modal-btns { display: flex; gap: 10px; justify-content: flex-end; margin-top: 1.25rem; }
+  .combo-wrap { display: flex; flex-direction: column; gap: 5px; }
+  .form-label-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+  .form-label-row label { margin-bottom: 0 !important; }
+  .inline-manage-btn { background: none; border: none; color: var(--primary); font-size: 12px; cursor: pointer; font-weight: 500; padding: 0; }
+  .inline-manage-btn:hover { text-decoration: underline; }
+  .inline-manager { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 10px; margin-top: 6px; }
+  .combo-wrap select { width: 100%; padding: 9px 12px; border: 1px solid var(--gray-200); border-radius: var(--radius); font-size: 14px; color: var(--gray-900); outline: none; background: #fff; }
+  .combo-wrap select:focus { border-color: var(--primary); }
+  .combo-wrap input { width: 100%; padding: 9px 12px; border: 1px solid var(--border-accent,var(--primary)); border-radius: var(--radius); font-size: 14px; color: var(--gray-900); outline: none; background: #fff; }
+
+  /* 옵션 관리 공통 */
+  .opt-tag-list { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; min-height: 36px; }
+  .opt-tag { font-size: 12px; padding: 4px 10px; border-radius: 20px; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; gap: 5px; }
+  .opt-tag-del { background: none; border: none; color: var(--primary); cursor: pointer; font-size: 15px; line-height: 1; padding: 0; }
+  .opt-add-row { display: flex; gap: 6px; margin-top: 4px; }
+  .opt-add-row input { flex: 1; padding: 7px 10px; border: 1px solid var(--gray-200); border-radius: var(--radius); font-size: 13px; outline: none; }
+  .opt-add-row input:focus { border-color: var(--primary); }
+  .opt-add-row button { padding: 7px 14px; background: var(--primary); color: #fff; border: none; border-radius: var(--radius); font-size: 13px; cursor: pointer; white-space: nowrap; }
 
   /* 카테고리 관리 */
   .cat-manage { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
@@ -133,7 +153,8 @@
     <span id="admin-badge" style="display:none;font-size:12px;background:#E6F4EA;color:#1e7e34;padding:5px 12px;border-radius:20px;font-weight:600;">관리자 모드</span>
     <button id="admin-login-btn" class="btn btn-outline" style="font-size:13px;padding:7px 14px;" onclick="openAdminModal()">🔒 관리자 로그인</button>
     <button id="admin-logout-btn" class="btn btn-outline" style="display:none;font-size:13px;padding:7px 14px;color:var(--danger);border-color:var(--danger);" onclick="adminLogout()">로그아웃</button>
-    <button id="cat-btn" class="btn btn-outline" style="display:none;font-size:13px;padding:7px 12px;" onclick="openCatModal()">카테고리 관리</button>
+    <button id="cat-btn" class="btn btn-outline" style="display:none;font-size:13px;padding:7px 12px;" onclick="openCatModal()">카테고리</button>
+    <button id="options-btn" class="btn btn-outline" style="display:none;font-size:13px;padding:7px 12px;" onclick="openOptionsModal()">재질/규격/두께</button>
     <button id="add-btn" class="btn btn-primary" style="display:none;" onclick="openAddModal()">+ 품목 추가</button>
   </div>
 </div>
@@ -206,7 +227,7 @@
     <h3 id="modal-title">품목 추가</h3>
     <div class="form-group">
       <label>카테고리 *</label>
-      <select id="f-cat">
+      <select id="f-cat" onchange="updateSpecOptions(this.value)">
         <option value="">카테고리 선택</option>
       </select>
     </div>
@@ -217,7 +238,18 @@
     <div class="form-row">
       <div class="form-group">
         <label>재질</label>
-        <input id="f-material" type="text" placeholder="예: SS400">
+        <div class="combo-wrap">
+          <select id="f-material-sel" onchange="syncCombo('material')">
+            <option value="">선택</option>
+            <option>SS400</option>
+            <option>STS304</option>
+            <option>AL</option>
+            <option>PP</option>
+            <option>PE</option>
+            <option value="__custom__">직접 입력</option>
+          </select>
+          <input id="f-material" type="text" placeholder="직접 입력" style="display:none">
+        </div>
       </div>
       <div class="form-group">
         <label>사이즈</label>
@@ -227,20 +259,103 @@
     <div class="form-row">
       <div class="form-group">
         <label>규격</label>
-        <input id="f-spec" type="text" placeholder="예: 100A">
+        <div class="combo-wrap">
+          <select id="f-spec-sel" onchange="syncCombo('spec')">
+            <option value="">선택</option>
+          </select>
+          <input id="f-spec" type="text" placeholder="직접 입력">
+        </div>
       </div>
+      <div class="form-group">
+        <label>두께</label>
+        <div class="combo-wrap">
+          <select id="f-thickness-sel" onchange="syncCombo('thickness')">
+            <option value="">선택</option>
+            <option>1.0t</option>
+            <option>1.2t</option>
+            <option>1.5t</option>
+            <option>2.0t</option>
+            <option>2.3t</option>
+            <option>2.5t</option>
+            <option>3.0t</option>
+            <option>3.2t</option>
+            <option>4.0t</option>
+            <option>4.5t</option>
+            <option>5.0t</option>
+            <option>6.0t</option>
+            <option value="__custom__">직접 입력</option>
+          </select>
+          <input id="f-thickness" type="text" placeholder="직접 입력" style="display:none">
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
       <div class="form-group">
         <label>수량</label>
         <input id="f-qty" type="number" min="0" value="0">
       </div>
+      <div class="form-group">
+        <label>최소 재고 (경고 기준)</label>
+        <input id="f-min" type="number" min="0" value="5">
+      </div>
     </div>
-    <div class="form-group">
-      <label>최소 재고 (경고 기준)</label>
-      <input id="f-min" type="number" min="0" value="5">
-    </div>
+
     <div class="modal-btns">
       <button class="btn btn-outline" onclick="closeModal()">취소</button>
       <button class="btn btn-primary" onclick="saveItem()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 재질/규격/두께 관리 모달 -->
+<div class="modal-overlay" id="options-modal" style="display:none" onclick="if(event.target===this)closeOptionsModal()">
+  <div class="modal" style="width:480px;max-height:85vh;overflow-y:auto;">
+    <h3>재질 / 규격 / 두께 관리</h3>
+
+    <!-- 탭 -->
+    <div style="display:flex;gap:0;border-bottom:1px solid var(--gray-200);margin-bottom:1rem;">
+      <button class="opt-tab active" onclick="switchOptTab('material')" id="tab-material" style="flex:1;padding:10px;border:none;background:none;cursor:pointer;font-size:14px;font-weight:500;border-bottom:2px solid var(--primary);color:var(--primary);">재질</button>
+      <button class="opt-tab" onclick="switchOptTab('spec')" id="tab-spec" style="flex:1;padding:10px;border:none;background:none;cursor:pointer;font-size:14px;color:var(--gray-600);border-bottom:2px solid transparent;">규격</button>
+      <button class="opt-tab" onclick="switchOptTab('thickness')" id="tab-thickness" style="flex:1;padding:10px;border:none;background:none;cursor:pointer;font-size:14px;color:var(--gray-600);border-bottom:2px solid transparent;">두께</button>
+    </div>
+
+    <!-- 재질 탭 -->
+    <div id="opt-material">
+      <p style="font-size:13px;color:var(--gray-600);margin-bottom:10px;">품목 추가 시 선택할 재질 목록을 관리해요.</p>
+      <div class="opt-tag-list" id="material-tag-list"></div>
+      <div class="opt-add-row">
+        <input id="material-new" type="text" placeholder="새 재질 입력 (예: GC250)">
+        <button onclick="addOption('material')">추가</button>
+      </div>
+    </div>
+
+    <!-- 규격 탭 -->
+    <div id="opt-spec" style="display:none">
+      <p style="font-size:13px;color:var(--gray-600);margin-bottom:10px;">카테고리별 규격 목록을 관리해요.</p>
+      <div class="form-group" style="margin-bottom:10px;">
+        <select id="spec-cat-sel" onchange="renderSpecTags()" style="width:100%;padding:8px 10px;border:1px solid var(--gray-200);border-radius:var(--radius);font-size:14px;background:#fff;outline:none;">
+          <option value="">카테고리 선택</option>
+        </select>
+      </div>
+      <div class="opt-tag-list" id="spec-tag-list"></div>
+      <div class="opt-add-row">
+        <input id="spec-new" type="text" placeholder="새 규격 입력 (예: 150A)">
+        <button onclick="addOption('spec')">추가</button>
+      </div>
+    </div>
+
+    <!-- 두께 탭 -->
+    <div id="opt-thickness" style="display:none">
+      <p style="font-size:13px;color:var(--gray-600);margin-bottom:10px;">품목 추가 시 선택할 두께 목록을 관리해요.</p>
+      <div class="opt-tag-list" id="thickness-tag-list"></div>
+      <div class="opt-add-row">
+        <input id="thickness-new" type="text" placeholder="새 두께 입력 (예: 8.0t)">
+        <button onclick="addOption('thickness')">추가</button>
+      </div>
+    </div>
+
+    <div class="modal-btns">
+      <button class="btn btn-primary" onclick="closeOptionsModal()">완료</button>
     </div>
   </div>
 </div>
@@ -266,7 +381,7 @@
 <script>
 // ============================================================
 // ▼▼▼ 여기에 배포 후 받은 웹앱 URL을 붙여넣으세요 ▼▼▼
-const API_URL = 'https://script.google.com/macros/s/AKfycbyI-5ymn7w0nekGNnORWhjWftCHsmxKhDU3b0sfDjpg5azYczvLK5OpLwSVQyPKp8di/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbyUWOuay_oKJkAeU4URWVk-qtTvutqeFTemiWFlqrIjjMv1Soi1DwBJQQF98EqcKXcf/exec';
 // ============================================================
 
 let items = [], logs = [], editId = null;
@@ -330,10 +445,246 @@ function applyAdminUI() {
   document.getElementById('admin-login-btn').style.display  = isAdmin ? 'none' : '';
   document.getElementById('admin-logout-btn').style.display = isAdmin ? '' : 'none';
   document.getElementById('cat-btn').style.display          = isAdmin ? '' : 'none';
+  document.getElementById('options-btn').style.display      = isAdmin ? '' : 'none';
   document.getElementById('add-btn').style.display          = isAdmin ? '' : 'none';
   // 카드 내 버튼/입력창
   document.querySelectorAll('.admin-only').forEach(el => el.style.display = isAdmin ? '' : 'none');
   document.querySelectorAll('.qty-view').forEach(el => el.style.display   = isAdmin ? 'none' : '');
+}
+
+// 옵션 데이터 (재질, 규격, 두께)
+let optMaterials  = ['SS400', 'STS304', 'AL', 'PP', 'PE'];
+let optThickness  = ['1.0t','1.2t','1.5t','2.0t','2.3t','2.5t','3.0t','3.2t','4.0t','4.5t','5.0t','6.0t'];
+let optSpecs = {
+  '강관':    ['15A(Ø21.7)','20A(Ø27.2)','25A(Ø34.0)','32A(Ø42.7)','40A(Ø48.6)','50A(Ø60.5)','65A(Ø76.3)','80A(Ø89.1)','100A(Ø114.3)','125A(Ø139.8)','150A(Ø165.2)','200A(Ø216.3)'],
+  '각관':    ['20x20','25x25','30x30','40x40','50x50','60x60','75x75','100x100','20x40','25x50','30x60','40x80','50x100'],
+  '앵글':    ['25x25','30x30','40x40','50x50','60x60','75x75','100x100'],
+  '플레이트': ['100x100','150x150','200x200','250x250','300x300'],
+  '플랜지':  ['15A','20A','25A','32A','40A','50A','65A','80A','100A','125A','150A','200A'],
+  '밸브':    ['15A','20A','25A','32A','40A','50A','65A','80A','100A'],
+  '볼트/너트':['M6','M8','M10','M12','M16','M20','M24'],
+};
+
+// 옵션 관리 모달
+function openOptionsModal() {
+  switchOptTab('material');
+  renderOptTags('material');
+  renderOptTags('thickness');
+  // 규격 카테고리 셀렉트 채우기
+  const sel = document.getElementById('spec-cat-sel');
+  sel.innerHTML = '<option value="">카테고리 선택</option>' +
+    categories.map(c => `<option>${c}</option>`).join('');
+  document.getElementById('options-modal').style.display = 'flex';
+}
+function closeOptionsModal() {
+  document.getElementById('options-modal').style.display = 'none';
+  // 드롭다운 갱신
+  updateMaterialSelect();
+  updateThicknessSelect();
+}
+function switchOptTab(tab) {
+  ['material','spec','thickness'].forEach(t => {
+    document.getElementById('opt-' + t).style.display = t === tab ? '' : 'none';
+    const btn = document.getElementById('tab-' + t);
+    btn.style.borderBottom = t === tab ? '2px solid var(--primary)' : '2px solid transparent';
+    btn.style.color = t === tab ? 'var(--primary)' : 'var(--gray-600)';
+    btn.style.fontWeight = t === tab ? '500' : '400';
+  });
+}
+function renderOptTags(field) {
+  const list = field === 'material' ? optMaterials : optThickness;
+  const el = document.getElementById(field + '-tag-list');
+  el.innerHTML = list.map((v, i) => `
+    <div class="opt-tag">
+      ${v}
+      <button class="opt-tag-del" onclick="deleteOption('${field}',${i})">×</button>
+    </div>`).join('');
+}
+function renderSpecTags() {
+  const cat = document.getElementById('spec-cat-sel').value;
+  const list = cat ? (optSpecs[cat] || []) : [];
+  const el = document.getElementById('spec-tag-list');
+  if (!cat) { el.innerHTML = '<span style="font-size:13px;color:var(--gray-600)">카테고리를 선택해주세요</span>'; return; }
+  el.innerHTML = list.map((v, i) => `
+    <div class="opt-tag">
+      ${v}
+      <button class="opt-tag-del" onclick="deleteSpecOption(${i})">×</button>
+    </div>`).join('');
+}
+function addOption(field) {
+  if (field === 'spec') {
+    const cat = document.getElementById('spec-cat-sel').value;
+    if (!cat) { toast('카테고리를 먼저 선택해주세요.'); return; }
+    const val = document.getElementById('spec-new').value.trim();
+    if (!val) return;
+    if (!optSpecs[cat]) optSpecs[cat] = [];
+    if (optSpecs[cat].includes(val)) { toast('이미 있는 규격이에요.'); return; }
+    optSpecs[cat].push(val);
+    document.getElementById('spec-new').value = '';
+    renderSpecTags();
+  } else {
+    const list = field === 'material' ? optMaterials : optThickness;
+    const val = document.getElementById(field + '-new').value.trim();
+    if (!val) return;
+    if (list.includes(val)) { toast('이미 있는 항목이에요.'); return; }
+    list.push(val);
+    document.getElementById(field + '-new').value = '';
+    renderOptTags(field);
+  }
+  toast('추가됐어요!');
+}
+function deleteOption(field, idx) {
+  if (field === 'material') optMaterials.splice(idx, 1);
+  else optThickness.splice(idx, 1);
+  renderOptTags(field);
+}
+function deleteSpecOption(idx) {
+  const cat = document.getElementById('spec-cat-sel').value;
+  if (!cat || !optSpecs[cat]) return;
+  optSpecs[cat].splice(idx, 1);
+  renderSpecTags();
+}
+
+// 인라인 관리 (품목 추가 팝업 안)
+function toggleInlineManager(field) {
+  const el = document.getElementById('mgr-' + field);
+  const isOpen = el.style.display !== 'none';
+  // 모두 닫기
+  ['material','spec','thickness'].forEach(f => {
+    document.getElementById('mgr-' + f).style.display = 'none';
+  });
+  if (!isOpen) {
+    el.style.display = '';
+    renderInlineTags(field);
+  }
+}
+function renderInlineTags(field) {
+  if (field === 'spec') {
+    const cat = document.getElementById('f-cat').value;
+    const list = cat ? (optSpecs[cat] || []) : [];
+    const el = document.getElementById('inline-spec-tags');
+    if (!cat) {
+      el.innerHTML = '<span style="font-size:12px;color:var(--gray-600)">카테고리를 먼저 선택해주세요</span>';
+      return;
+    }
+    el.innerHTML = list.map((v,i) => `
+      <div class="opt-tag">${v}
+        <button class="opt-tag-del" onclick="deleteInlineOption('spec',${i})">×</button>
+      </div>`).join('');
+  } else {
+    const list = field === 'material' ? optMaterials : optThickness;
+    const el = document.getElementById('inline-' + field + '-tags');
+    el.innerHTML = list.map((v,i) => `
+      <div class="opt-tag">${v}
+        <button class="opt-tag-del" onclick="deleteInlineOption('${field}',${i})">×</button>
+      </div>`).join('');
+  }
+}
+function addInlineOption(field) {
+  const inp = document.getElementById('inline-' + field + '-new');
+  const val = inp.value.trim();
+  if (!val) return;
+  if (field === 'spec') {
+    const cat = document.getElementById('f-cat').value;
+    if (!cat) { toast('카테고리를 먼저 선택해주세요.'); return; }
+    if (!optSpecs[cat]) optSpecs[cat] = [];
+    if (optSpecs[cat].includes(val)) { toast('이미 있어요.'); return; }
+    optSpecs[cat].push(val);
+    updateSpecOptions(cat);
+  } else if (field === 'material') {
+    if (optMaterials.includes(val)) { toast('이미 있어요.'); return; }
+    optMaterials.push(val);
+    updateMaterialSelect();
+  } else {
+    if (optThickness.includes(val)) { toast('이미 있어요.'); return; }
+    optThickness.push(val);
+    updateThicknessSelect();
+  }
+  inp.value = '';
+  renderInlineTags(field);
+  toast(`"${val}" 추가됐어요!`);
+}
+function deleteInlineOption(field, idx) {
+  if (field === 'material') { optMaterials.splice(idx,1); updateMaterialSelect(); }
+  else if (field === 'thickness') { optThickness.splice(idx,1); updateThicknessSelect(); }
+  else {
+    const cat = document.getElementById('f-cat').value;
+    if (cat && optSpecs[cat]) { optSpecs[cat].splice(idx,1); updateSpecOptions(cat); }
+  }
+  renderInlineTags(field);
+}
+function updateMaterialSelect() {
+  const sel = document.getElementById('f-material-sel');
+  const cur = sel ? sel.value : '';
+  if (sel) sel.innerHTML = '<option value="">선택</option>' +
+    optMaterials.map(m => `<option${m===cur?' selected':''}>${m}</option>`).join('') +
+    '<option value="__custom__">직접 입력</option>';
+}
+function updateThicknessSelect() {
+  const sel = document.getElementById('f-thickness-sel');
+  const cur = sel ? sel.value : '';
+  if (sel) sel.innerHTML = '<option value="">선택</option>' +
+    optThickness.map(t => `<option${t===cur?' selected':''}>${t}</option>`).join('') +
+    '<option value="__custom__">직접 입력</option>';
+}
+
+// 카테고리별 규격 목록 (optSpecs 사용)
+
+function updateSpecOptions(cat) {
+  const sel = document.getElementById('f-spec-sel');
+  const specs = cat ? (optSpecs[cat] || []) : [];
+  sel.innerHTML = '<option value="">선택</option>' +
+    specs.map(s => `<option>${s}</option>`).join('') +
+    '<option value="__custom__">직접 입력</option>';
+  document.getElementById('f-spec').value = '';
+  document.getElementById('f-spec').style.display = 'none';
+  sel.value = '';
+}
+
+function syncCombo(field) {
+  const sel = document.getElementById('f-' + field + '-sel');
+  const inp = document.getElementById('f-' + field);
+  if (!inp) return;
+  if (sel.value === '__custom__') {
+    inp.style.display = '';
+    inp.focus();
+    inp.value = '';
+  } else if (sel.value === '') {
+    inp.style.display = 'none';
+    inp.value = '';
+  } else {
+    inp.style.display = 'none';
+    inp.value = sel.value;
+  }
+}
+
+function getComboVal(field) {
+  const sel = document.getElementById('f-' + field + '-sel');
+  const inp = document.getElementById('f-' + field);
+  if (!inp) return '';
+  if (sel.value === '__custom__' || sel.value === '') return inp.value.trim();
+  return sel.value;
+}
+
+function setComboVal(field, val) {
+  const sel = document.getElementById('f-' + field + '-sel');
+  const inp = document.getElementById('f-' + field);
+  if (!inp) return;
+  // 드롭다운에 있는지 확인
+  const opt = Array.from(sel.options).find(o => o.value === val || o.text === val);
+  if (opt && val) {
+    sel.value = opt.value || val;
+    inp.style.display = 'none';
+    inp.value = val;
+  } else if (val) {
+    sel.value = '__custom__';
+    inp.style.display = '';
+    inp.value = val;
+  } else {
+    sel.value = '';
+    inp.style.display = 'none';
+    inp.value = '';
+  }
 }
 
 async function loadAll() {
@@ -554,7 +905,15 @@ function openAddModal() {
   document.getElementById('modal-title').textContent = '품목 추가';
   updateCatSelect();
   document.getElementById('f-cat').value = '';
-  ['name','material','size','spec'].forEach(f => document.getElementById('f-' + f).value = '');
+  updateSpecOptions('');
+  document.getElementById('f-name').value = '';
+  document.getElementById('f-size').value = '';
+  updateMaterialSelect();
+  updateThicknessSelect();
+  setComboVal('material', '');
+  setComboVal('spec', '');
+  setComboVal('thickness', '');
+  updateSpecOptions('');
   document.getElementById('f-qty').value = 0;
   document.getElementById('f-min').value = 5;
   document.getElementById('modal').style.display = 'flex';
@@ -565,13 +924,15 @@ function openEditModal(id) {
   editId = id;
   document.getElementById('modal-title').textContent = '품목 수정';
   updateCatSelect();
-  document.getElementById('f-cat').value      = item.category || '';
-  document.getElementById('f-name').value     = item.name;
-  document.getElementById('f-material').value = item.material || '';
-  document.getElementById('f-size').value     = item.size || '';
-  document.getElementById('f-spec').value     = item.spec || '';
-  document.getElementById('f-qty').value      = item.qty;
-  document.getElementById('f-min').value      = item.min;
+  document.getElementById('f-cat').value  = item.category || '';
+  document.getElementById('f-name').value = item.name;
+  document.getElementById('f-size').value = item.size || '';
+  document.getElementById('f-qty').value  = item.qty;
+  document.getElementById('f-min').value  = item.min;
+  updateSpecOptions(item.category || '');
+  setComboVal('material', item.material || '');
+  setComboVal('spec', item.spec || '');
+  setComboVal('thickness', item.thickness || '');
   document.getElementById('modal').style.display = 'flex';
 }
 function closeModal() {
@@ -582,19 +943,21 @@ async function saveItem() {
   if (!name) { toast('품목명을 입력해 주세요.'); return; }
   const item = {
     name,
-    category: document.getElementById('f-cat').value,
-    material: document.getElementById('f-material').value.trim(),
-    size:     document.getElementById('f-size').value.trim(),
-    spec:     document.getElementById('f-spec').value.trim(),
-    qty:      parseInt(document.getElementById('f-qty').value) || 0,
-    min:      parseInt(document.getElementById('f-min').value) || 5,
+    category:  document.getElementById('f-cat').value,
+    material:  getComboVal('material'),
+    size:      document.getElementById('f-size').value.trim(),
+    spec:      getComboVal('spec'),
+    thickness: getComboVal('thickness'),
+    qty:       parseInt(document.getElementById('f-qty').value) || 0,
+    min:       parseInt(document.getElementById('f-min').value) || 5,
   };
   // 중복 체크 (추가 시에만, 카테고리+품목명+규격 동일하면 중복)
   if (!editId) {
     const dup = items.find(i =>
       i.name === item.name &&
       (i.category||'') === (item.category||'') &&
-      (i.spec||'') === (item.spec||'')
+      (i.spec||'') === (item.spec||'') &&
+      (i.thickness||'') === (item.thickness||'')
     );
     if (dup) {
       toast(`이미 등록된 품목이에요! (${item.category ? item.category+' · ' : ''}${item.name}${item.spec ? ' · '+item.spec : ''})`);
