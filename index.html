@@ -53,6 +53,7 @@
   .badge-cat { background: #E8F0FE; color: #1a56c4; }
   .badge-qty { background: var(--gray-100); color: #e03131; font-weight: 700; font-size: clamp(11px,2.8vw,14px); padding: clamp(3px,1vw,5px) clamp(8px,2.5vw,14px); border-radius: 50px; white-space: nowrap; border: 1.5px solid #e03131; }
   .badge-warn { background: var(--warning-light); color: #B06000; font-size: clamp(10px,2.2vw,12px); padding: 3px 8px; border-radius: 50px; }
+  .badge-bad { background: #fff; color: #e03131; font-size: clamp(10px,2.5vw,13px); font-weight: 700; padding: clamp(3px,1vw,5px) clamp(7px,2vw,12px); border-radius: 50px; border: 1.5px solid #e03131; white-space: nowrap; }
   .item-right { display: flex; align-items: center; gap: 8px; justify-content: flex-end; width: 100%; }
   .qty-input { font-size: 16px; font-weight: 700; color: var(--gray-900); width: 52px; text-align: center; border: 1.5px solid var(--gray-200); border-radius: var(--radius); padding: 4px 0; background: #fff; outline: none; }
   .qty-input:focus { border-color: var(--primary); }
@@ -271,6 +272,15 @@
       </div>
     </div>
 
+    <!-- 악성재고 토글 -->
+    <div class="form-group" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--gray-50);border-radius:var(--radius);border:1px solid var(--gray-200);">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin:0;font-size:14px;color:var(--gray-900);font-weight:500;">
+        <input type="checkbox" id="f-bad" style="width:16px;height:16px;accent-color:#e03131;cursor:pointer;">
+        악성재고로 표시
+      </label>
+      <span style="font-size:12px;color:var(--gray-600);">체크 시 <span style="color:#e03131;font-weight:600;">악성</span> 배지 표시</span>
+    </div>
+
     <!-- 수량 + 최소재고 -->
     <div class="form-row">
       <div class="form-group">
@@ -479,9 +489,9 @@ async function loadAll() {
 }
 
 function renderCatChips() {
-  const allCats = ['전체',...optData.cat];
+  const allCats = ['전체','⚠ 악성재고',...optData.cat];
   document.getElementById('cat-filter-row').innerHTML = allCats.map(c=>
-    `<button class="cat-chip${activeCat===c?' active':''}" onclick="setCat('${c}')">${c}</button>`
+    `<button class="cat-chip${activeCat===c?' active':''}" ${c==='⚠ 악성재고'?'style="border-color:#e03131;color:#e03131;"':''} onclick="setCat('${c}')">${c}</button>`
   ).join('');
 }
 function setCat(cat) { activeCat=cat; renderCatChips(); renderItems(); }
@@ -491,7 +501,7 @@ function renderItems() {
   const sort = document.getElementById('sort-select').value;
   let filtered = items.filter(i=>
     i.qty>0 &&
-    (activeCat==='전체'||i.category===activeCat) &&
+    (activeCat==='전체'||(activeCat==='⚠ 악성재고'&&i.isBad)||i.category===activeCat) &&
     (i.name.toLowerCase().includes(q)||(i.material||'').toLowerCase().includes(q)||
      (i.spec||'').toLowerCase().includes(q)||(i.category||'').toLowerCase().includes(q))
   );
@@ -526,6 +536,7 @@ function cardHTML(item) {
   <div class="item-card${isLow?' low':''}">
     <div class="item-body">
       <div class="badges">
+        ${item.isBad?`<span class="badge-bad">악성</span>`:''}
         ${item.category?`<span class="badge badge-cat">${item.category}</span>`:''}
         ${item.spec?`<span class="badge">${item.spec}</span>`:''}
         <span class="badge">${item.name}</span>
@@ -598,6 +609,7 @@ function openAddModal() {
   document.getElementById('f-material').value='';
   document.getElementById('f-spec').value='';
   document.getElementById('f-thickness').value='';
+  document.getElementById('f-bad').checked=false;
   document.getElementById('f-qty').value=0;
   document.getElementById('f-min').value=5;
   ['cat','material','spec','thickness'].forEach(f=>{
@@ -617,6 +629,7 @@ function openEditModal(id) {
   document.getElementById('f-material').value=item.material||'';
   document.getElementById('f-spec').value=item.spec||'';
   document.getElementById('f-thickness').value=item.thickness||'';
+  document.getElementById('f-bad').checked=!!item.isBad;
   document.getElementById('f-qty').value=item.qty;
   document.getElementById('f-min').value=item.min;
   ['cat','material','spec','thickness'].forEach(f=>{
@@ -631,6 +644,7 @@ async function saveItem() {
   if(!name){toast('품목명을 입력해 주세요.');return;}
   const item={
     name,
+    isBad:     document.getElementById('f-bad').checked,
     category:  document.getElementById('f-cat').value,
     material:  document.getElementById('f-material').value,
     size:      document.getElementById('f-size').value.trim(),
