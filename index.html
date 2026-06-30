@@ -317,13 +317,15 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const API_URL    = 'https://script.google.com/macros/s/AKfycbyUWOuay_oKJkAeU4URWVk-qtTvutqeFTemiWFlqrIjjMv1Soi1DwBJQQF98EqcKXcf/exec';
-const CACHE_KEY  = 'inv_cache';
-const OPT_KEY    = 'inv_opt';
+const SUPABASE_URL  = 'https://lhixtdtgbjylkgrndhfy.supabase.co';   // ← 여기에 Project URL 입력
+const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxoaXh0ZHRnYmp5bGtncm5kaGZ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4MjM0NDgsImV4cCI6MjA5ODM5OTQ0OH0.3jIRWf8hVuPLjYuaez_WIRw0H4GiyHhltk2yhyTuAYs';   // ← 여기에 anon public key 입력
+const ADMIN_PASSWORD = '9096';                // ← 비밀번호
+
+const CACHE_KEY = 'inv_cache';
+const OPT_KEY   = 'inv_opt';
 
 let items = [], logs = [], editId = null, isAdmin = false, activeCat = '전체';
 
-// 기본 옵션 (Sheets에서 못 불러올 때 fallback)
 const DEFAULT_OPT = {
   cat:       ['강관','각관','앵글','플레이트','플랜지','밸브','볼트/너트'],
   material:  ['SS400','STS304','AL','PP','PE'],
@@ -342,15 +344,24 @@ const DEFAULT_OPT = {
 let optData = JSON.parse(JSON.stringify(DEFAULT_OPT));
 
 // ============================================================
-// API
+// Supabase API
 // ============================================================
-async function api(action, extra={}) {
+async function sb(path, method='GET', body=null) {
   setSyncing(true);
   try {
-    const res  = await fetch(API_URL, {method:'POST', body:JSON.stringify({action,...extra})});
-    const data = await res.json();
-    if (data.error) throw new Error(data.error);
-    return data;
+    const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, {
+      method,
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': method==='POST' ? 'return=representation' : 'return=representation',
+      },
+      body: body ? JSON.stringify(body) : null,
+    });
+    if (!res.ok) throw new Error(await res.text());
+    const text = await res.text();
+    return text ? JSON.parse(text) : [];
   } finally {
     setSyncing(false);
   }
@@ -378,33 +389,22 @@ function loadOptCache() {
 }
 
 // ============================================================
-// 초기 로드 (캐시 우선 → 백그라운드 최신화)
+// 초기 로드
 // ============================================================
 async function loadAll(forceRefresh=false) {
   const cache    = loadCache();
   const optCache = loadOptCache();
 
-  // 캐시 있으면 즉시 화면에 표시
   if (!forceRefresh && cache && cache.items) {
     items = cache.items;
     logs  = cache.logs || [];
-    if (optCache) {
-      optData = optCache;
-    }
-    renderCatChips();
-    renderItems();
-    renderLog();
-    applyAdminUI();
+    if (optCache) optData = optCache;
+    renderCatChips(); renderItems(); renderLog(); applyAdminUI();
     document.getElementById('cache-banner').classList.remove('hidden');
-
-    // 백그라운드에서 최신 데이터 가져오기
-    fetchFresh().then(() => {
-      document.getElementById('cache-banner').classList.add('hidden');
-    });
+    fetchFresh().then(() => document.getElementById('cache-banner').classList.add('hidden'));
     return;
   }
 
-  // 캐시 없거나 강제 새로고침
   document.getElementById('item-list').innerHTML = '<div class="loading">⚡ 불러오는 중...</div>';
   await fetchFresh();
   document.getElementById('cache-banner').classList.add('hidden');
@@ -412,13 +412,36 @@ async function loadAll(forceRefresh=false) {
 
 async function fetchFresh() {
   try {
-    // 3번 호출 → 1번으로 통합
-    const r = await api('getAll');
-    items = r.items || [];
-    logs  = r.logs  || [];
+    const [itemRows, logRows, optRows] = await Promise.all([
+      sb('품목?order=created_at.asc'),
+      sb('입출고이력?order=created_at.desc&limit=100'),
+      sb('옵션설정?id=eq.1'),
+    ]);
 
-    if (r.optData) {
-      optData = r.optData;
+    items = itemRows.map(r => ({
+      id:        r.id,
+      isBad:     r.is_bad,
+      category:  r.category || '',
+      name:      r.name || '',
+      material:  r.material || '',
+      size:      r.size || '',
+      spec:      r.spec || '',
+      thickness: r.thickness || '',
+      qty:       r.qty || 0,
+      min:       r.min_qty || 5,
+    }));
+
+    logs = logRows.map(r => ({
+      id:       r.item_id,
+      category: r.category || '',
+      name:     r.name || '',
+      delta:    r.delta,
+      qty:      r.qty,
+      time:     new Date(r.created_at).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}),
+    }));
+
+    if (optRows.length && optRows[0].data) {
+      optData = optRows[0].data;
       saveOptCache(optData);
     } else {
       const oc = loadOptCache();
@@ -426,25 +449,21 @@ async function fetchFresh() {
     }
 
     saveCache({items, logs});
-    renderCatChips();
-    renderItems();
-    renderLog();
-    applyAdminUI();
+    renderCatChips(); renderItems(); renderLog(); applyAdminUI();
   } catch(e) {
+    console.error(e);
     const cache = loadCache();
     if (cache && cache.items) {
       items = cache.items;
       logs  = cache.logs || [];
-      renderCatChips();
-      renderItems();
-      renderLog();
+      renderCatChips(); renderItems(); renderLog();
       toast('⚠ 서버 연결 실패. 캐시 데이터를 표시합니다.');
     }
   }
 }
 
 // ============================================================
-// 관리자
+// 관리자 (서버 없이 클라이언트 검증)
 // ============================================================
 function openAdminModal() {
   document.getElementById('admin-pw').value = '';
@@ -455,11 +474,11 @@ function openAdminModal() {
 function closeAdminModal() { document.getElementById('admin-modal').style.display = 'none'; }
 async function submitAdminLogin() {
   const pw = document.getElementById('admin-pw').value;
-  try {
-    const r = await api('checkAdmin', {password: pw});
-    if (r.ok) { isAdmin=true; closeAdminModal(); applyAdminUI(); toast('관리자 모드로 전환됐어요.'); }
-    else document.getElementById('admin-error').style.display = 'block';
-  } catch(e) { document.getElementById('admin-error').style.display = 'block'; }
+  if (pw === ADMIN_PASSWORD) {
+    isAdmin = true; closeAdminModal(); applyAdminUI(); toast('관리자 모드로 전환됐어요.');
+  } else {
+    document.getElementById('admin-error').style.display = 'block';
+  }
 }
 function adminLogout() { isAdmin=false; applyAdminUI(); toast('로그아웃됐어요.'); }
 function applyAdminUI() {
@@ -468,7 +487,6 @@ function applyAdminUI() {
   document.getElementById('admin-logout-btn').style.display = isAdmin ? '' : 'none';
   document.getElementById('add-btn').style.display          = isAdmin ? '' : 'none';
   document.querySelectorAll('.admin-only').forEach(el => {
-    // qty-adj-panel은 display:none 유지 (토글로 열림), 나머지만 보임
     if (el.classList.contains('qty-adj-panel')) return;
     el.style.display = isAdmin ? '' : 'none';
   });
@@ -556,7 +574,10 @@ function delTag(field, idx) {
 // Sheets + 로컬캐시에 옵션 저장
 async function persistOptions() {
   saveOptCache(optData);
-  try { await api('saveOptions', {optData}); } catch(e) { /* 실패해도 로컬캐시는 남음 */ }
+  try {
+    await sb('옵션설정?id=eq.1', 'DELETE');
+    await sb('옵션설정', 'POST', {id: 1, data: optData});
+  } catch(e) { console.error(e); }
 }
 
 // ============================================================
@@ -741,15 +762,18 @@ async function confirmQty(id) {
   const item = items.find(i => i.id===id); if (!item) return;
   const p    = pendingQty[id];
   if (!p || p.delta === 0) return;
-  const r = await api('changeQty', {id, delta: p.delta});
-  item.qty = r.qty;
+  const newQty = Math.max(0, item.qty + p.delta);
+  await sb(`품목?id=eq.${id}`, 'PATCH', {qty: newQty});
+  await sb('입출고이력', 'POST', {
+    item_id: id, category: item.category, name: item.name,
+    delta: p.delta, qty: newQty
+  });
+  item.qty = newQty;
   const time = new Date().toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
-  logs.unshift({id, name:item.name, category:item.category, delta:p.delta, qty:r.qty, time});
+  logs.unshift({id, name:item.name, category:item.category, delta:p.delta, qty:newQty, time});
   delete pendingQty[id];
   saveCache({items, logs});
-  renderItems();
-  applyAdminUI();
-  renderLog();
+  renderItems(); applyAdminUI(); renderLog();
   toast(`${item.name} ${p.delta>0?'+'+p.delta:p.delta}개 저장 완료`);
 }
 
@@ -769,14 +793,17 @@ function cancelQty(id) {
 
 async function changeQty(id, delta) {
   const item = items.find(i => i.id===id); if (!item) return;
-  const r = await api('changeQty', {id, delta});
-  item.qty = r.qty;
+  const newQty = Math.max(0, item.qty + delta);
+  await sb(`품목?id=eq.${id}`, 'PATCH', {qty: newQty});
+  await sb('입출고이력', 'POST', {
+    item_id: id, category: item.category, name: item.name,
+    delta, qty: newQty
+  });
+  item.qty = newQty;
   const time = new Date().toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
-  logs.unshift({id, name:item.name, category:item.category, delta, qty:r.qty, time});
+  logs.unshift({id, name:item.name, category:item.category, delta, qty:newQty, time});
   saveCache({items, logs});
-  renderItems();
-  applyAdminUI();
-  renderLog();
+  renderItems(); applyAdminUI(); renderLog();
 }
 
 function renderLog() {
@@ -844,28 +871,31 @@ async function saveItem() {
   if (!name) { toast('품목명을 입력해 주세요.'); return; }
   const item = {
     name,
-    isBad:     document.getElementById('f-bad').checked,
+    is_bad:    document.getElementById('f-bad').checked,
     category:  document.getElementById('f-cat').value,
     material:  document.getElementById('f-material').value,
     size:      document.getElementById('f-size').value.trim(),
     spec:      document.getElementById('f-spec').value,
     thickness: document.getElementById('f-thickness').value,
     qty:       parseInt(document.getElementById('f-qty').value)||0,
-    min:       parseInt(document.getElementById('f-min').value)||5,
+    min_qty:   parseInt(document.getElementById('f-min').value)||5,
   };
   if (!editId) {
     const dup = items.find(i => i.name===item.name && (i.category||'')===(item.category||'') && (i.spec||'')===(item.spec||'') && (i.thickness||'')===(item.thickness||''));
     if (dup) { toast('이미 등록된 품목이에요!'); return; }
-  }
-  if (editId) {
-    await api('updateItem', {item:{...item, id:editId}});
-    const idx = items.findIndex(i => i.id===editId);
-    items[idx] = {...items[idx], ...item};
-    toast('품목이 수정되었습니다.');
-  } else {
-    const r = await api('addItem', {item});
-    items.push({id:r.id, ...item});
+    const id = 'ITEM_' + Date.now();
+    await sb('품목', 'POST', {...item, id});
+    items.push({id, isBad:item.is_bad, category:item.category, name:item.name,
+      material:item.material, size:item.size, spec:item.spec,
+      thickness:item.thickness, qty:item.qty, min:item.min_qty});
     toast('품목이 추가되었습니다.');
+  } else {
+    await sb(`품목?id=eq.${editId}`, 'PATCH', item);
+    const idx = items.findIndex(i => i.id===editId);
+    items[idx] = {...items[idx], isBad:item.is_bad, category:item.category,
+      name:item.name, material:item.material, size:item.size,
+      spec:item.spec, thickness:item.thickness, qty:item.qty, min:item.min_qty};
+    toast('품목이 수정되었습니다.');
   }
   saveCache({items, logs});
   closeModal(); renderCatChips(); renderItems();
