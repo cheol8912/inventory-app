@@ -66,7 +66,7 @@
   .btn-outline { background: #fff; color: var(--primary); border: 1px solid var(--primary); } /* 테두리만 있는 버튼: "관리자 로그인", "새로고침" */
   .btn-outline:hover { background: var(--primary-light); }
 
-  /* 카테고리 칩 버튼 (전체 / ⚠악성재고 / 강관 / 각관 ... 둥근 알약 모양 필터) */
+  /* 카테고리 칩 버튼 (전체 / ⚠악성 / 강관 / 각관 ... 둥근 알약 모양 필터) */
   .cat-filter-row { display: flex; gap: 6px; /* 칩들 사이 간격 */ flex-wrap: wrap; margin-bottom: 1rem; }
   .cat-chip { padding: 5px 14px; /* 칩 크기 */ border-radius: 20px; /* 둥근 알약 모양 정도 */ font-size: 13px; /* 칩 글자 크기 */ font-weight: 500; border: 1px solid var(--gray-200); background: #fff; color: var(--gray-600); cursor: pointer; transition: all 0.15s; }
   .cat-chip.active { background: var(--primary); color: #fff; border-color: var(--primary); } /* 선택된 칩은 파란 배경 */
@@ -364,7 +364,7 @@
     <div class="form-group" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--gray-50);border-radius:var(--radius);border:1px solid var(--gray-200);">
       <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin:0;font-size:14px;color:var(--gray-900);font-weight:500;">
         <input type="checkbox" id="f-bad" style="width:16px;height:16px;accent-color:#e03131;cursor:pointer;">
-        악성재고로 표시
+        악성로 표시
       </label>
       <span style="font-size:12px;color:var(--gray-600);">체크 시 <span style="color:#e03131;font-weight:600;">악성</span> 배지 표시</span>
     </div>
@@ -749,9 +749,9 @@ function initAllSelects() {
 // 렌더링
 // ============================================================
 function renderCatChips() {
-  const allCats = ['전체','⚠ 악성재고','⚠ 재고부족',...optData.cat];
+  const allCats = ['전체','⚠ 악성','⚠ 부족',...optData.cat];
   document.getElementById('cat-filter-row').innerHTML = allCats.map(c =>
-    `<button class="cat-chip${activeCat===c?' active':''}" ${(c==='⚠ 악성재고'||c==='⚠ 재고부족')?'style="border-color:#e03131;color:#e03131;"':''} onclick="setCat('${c}')">${c}</button>`
+    `<button class="cat-chip${activeCat===c?' active':''}" ${(c==='⚠ 악성'||c==='⚠ 부족')?'style="border-color:#e03131;color:#e03131;"':''} onclick="setCat('${c}')">${c}</button>`
   ).join('');
 }
 function setCat(cat) { activeCat=cat; renderCatChips(); renderItems(); }
@@ -761,7 +761,7 @@ function renderItems() {
   const sort = document.getElementById('sort-select').value;
   let filtered = items.filter(i =>
     i.qty > 0 &&
-    (activeCat==='전체' || (activeCat==='⚠ 악성재고' && i.isBad) || (activeCat==='⚠ 재고부족' && i.qty < i.min) || i.category===activeCat) &&
+    (activeCat==='전체' || (activeCat==='⚠ 악성' && i.isBad) || (activeCat==='⚠ 재고부족' && i.qty < i.min) || i.category===activeCat) &&
     (i.name.toLowerCase().includes(q) || (i.material||'').toLowerCase().includes(q) ||
      (i.spec||'').toLowerCase().includes(q) || (i.category||'').toLowerCase().includes(q))
   );
