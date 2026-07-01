@@ -115,7 +115,7 @@
   .qty-btn-plus.active-plus   { background: var(--success); color: #fff; } /* + 버튼이 선택(활성)되면 꽉 찬 초록 */
 
   /* 수량 직접 입력하는 칸 (숫자 타이핑하는 작은 네모) */
-  .qty-direct-input { width: 80px; /* 입력칸 가로 폭 */ padding: 4px 12px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 14px; font-weight: 700; text-align: right; outline: none; color: var(--gray-900); }
+  .qty-direct-input { width: 52px; /* 입력칸 가로 폭 */ padding: 4px 6px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 14px; font-weight: 700; text-align: center; outline: none; color: var(--gray-900); }
   .qty-direct-input:focus { border-color: var(--primary); }
 
   /* "✔ 확인" 초록 알약 버튼 — 수량 변경을 실제로 서버에 저장할 때 누르는 버튼 */
@@ -520,6 +520,14 @@ async function fetchFresh() {
       if (oc) optData = oc;
     }
 
+    // 기존에 저장된 카테고리/재질/규격/두께 순서가 규칙과 다르면 한 번 재정렬해서 다시 저장
+    // (순서가 이미 맞으면 그냥 넘어가고, 서버에 불필요한 저장은 하지 않음)
+    const beforeSort = JSON.stringify(optData);
+    sortAllOptions();
+    if (JSON.stringify(optData) !== beforeSort) {
+      persistOptions();
+    }
+
     saveCache({items, logs});
     renderCatChips(); renderItems(); renderLog(); applyAdminUI();
   } catch(e) {
@@ -591,6 +599,49 @@ function renderTags(field) {
 }
 
 // ============================================================
+// 정렬 도우미
+// - 카테고리/재질: 가나다순
+// - 규격/두께: 숫자 크기순 (예: 50x50 < 50x75 < 50x100, 100A < 125A < 150A)
+// ============================================================
+function naturalCompare(a, b) {
+  // 문자열을 "숫자 덩어리"와 "문자 덩어리"로 쪼개서, 숫자는 크기로, 문자는 가나다순으로 비교
+  const tokenize = s => s.match(/(\d+(\.\d+)?)|(\D+)/g) || [];
+  const ta = tokenize(a), tb = tokenize(b);
+  const len = Math.max(ta.length, tb.length);
+  for (let i = 0; i < len; i++) {
+    const pa = ta[i] || '', pb = tb[i] || '';
+    const na = parseFloat(pa), nb = parseFloat(pb);
+    const isNumA = /^\d/.test(pa), isNumB = /^\d/.test(pb);
+    if (isNumA && isNumB) {
+      if (na !== nb) return na - nb;
+    } else {
+      const c = pa.localeCompare(pb, 'ko');
+      if (c !== 0) return c;
+    }
+  }
+  return 0;
+}
+
+// 카테고리/재질/규격/두께 전체 목록을 한 번에 재정렬
+// (기존에 뒤죽박죽 저장된 목록도 규칙에 맞게 다시 정렬해줌)
+function sortAllOptions() {
+  optData.cat       = [...optData.cat].sort((a,b) => a.localeCompare(b, 'ko'));       // 카테고리: 가나다순
+  optData.material  = [...optData.material].sort((a,b) => a.localeCompare(b, 'ko'));  // 재질: 가나다순
+  optData.thickness = [...optData.thickness].sort(naturalCompare);                     // 두께: 숫자순
+  Object.keys(optData.spec || {}).forEach(cat => {
+    optData.spec[cat] = [...optData.spec[cat]].sort(naturalCompare);                  // 규격: 숫자순 (카테고리별)
+  });
+}
+
+// 항목(field)에 맞는 정렬 기준으로 배열의 알맞은 위치에 새 값을 끼워 넣음
+function insertSorted(arr, val, field) {
+  const useKorean = (field === 'cat' || field === 'material'); // 카테고리/재질 = 가나다순, 나머지(규격/두께) = 숫자순
+  const idx = arr.findIndex(item => useKorean ? item.localeCompare(val, 'ko') > 0 : naturalCompare(item, val) > 0);
+  if (idx === -1) arr.push(val);
+  else arr.splice(idx, 0, val);
+}
+
+// ============================================================
 // 태그 추가/삭제 → 자동으로 Sheets에 저장
 // ============================================================
 function addTag(field) {
@@ -602,19 +653,19 @@ function addTag(field) {
     if (!cat) { toast('카테고리를 먼저 선택해주세요.'); return; }
     if (!optData.spec[cat]) optData.spec[cat] = [];
     if (optData.spec[cat].includes(val)) { toast('이미 있어요.'); return; }
-    optData.spec[cat].push(val);
+    insertSorted(optData.spec[cat], val, 'spec');
     refreshSelect('spec');
   } else if (field === 'cat') {
     if (optData.cat.includes(val)) { toast('이미 있어요.'); return; }
-    optData.cat.push(val);
+    insertSorted(optData.cat, val, 'cat');
     refreshSelect('cat');
   } else if (field === 'material') {
     if (optData.material.includes(val)) { toast('이미 있어요.'); return; }
-    optData.material.push(val);
+    insertSorted(optData.material, val, 'material');
     refreshSelect('material');
   } else {
     if (optData.thickness.includes(val)) { toast('이미 있어요.'); return; }
-    optData.thickness.push(val);
+    insertSorted(optData.thickness, val, 'thickness');
     refreshSelect('thickness');
   }
   inp.value = '';
@@ -622,6 +673,7 @@ function addTag(field) {
   toast(`"${val}" 추가됐어요!`);
   persistOptions();
 }
+
 
 function delTag(field, idx) {
   if (field === 'spec') {
