@@ -45,7 +45,7 @@
   .header-right { display: flex; align-items: center; gap: 10px; /* 헤더 우측 버튼들 사이 간격 */ }
   .sync-status { font-size: 12px; color: var(--gray-600); display: flex; align-items: center; gap: 5px; } /* "연결됨" 글자 */
   .app-version { font-size: 12px; /* 버전/날짜 글자 크기 - 눈에 띄지 않게 작게 */ color: var(--gray-400); /* 버전/날짜 글자색 - 연한 회색 */ white-space: nowrap; }
-  .sync-dot { width: 8px; height: 8px; /* 동기화 점 크기 */ border-radius: 50%; background: var(--success); }
+  .sync-dot { width: 8px; height: 9px; /* 동기화 점 크기 */ border-radius: 50%; background: var(--success); }
   .sync-dot.loading { background: var(--warning); animation: pulse 1s infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
@@ -100,6 +100,10 @@
 
   .item-warn { font-size: 12px; color: #B06000; background: var(--warning-light); border-radius: 50px; padding: 2px 8px; white-space: nowrap; } /* "⚠ 부족" 작은 글자 */
 
+  /* 품목 카드의 "✎ 수정" 버튼 - 관리자만 보임, 누르면 품목 수정 팝업이 열림 */
+  .item-edit-btn { background: none; border: none; color: var(--primary); font-size: 12px; /* 수정 버튼 글자 크기 */ font-weight: 600; cursor: pointer; padding: 2px 4px; white-space: nowrap; }
+  .item-edit-btn:hover { text-decoration: underline; }
+
   /* 카드 우측: 현재수량 배지 + 수량 조절 버튼들이 있는 영역 */
   .item-right { display: flex; align-items: center; gap: 6px; /* 우측 버튼들 사이 간격 */ flex-shrink: 0; justify-content: flex-end; width: 100%; }
 
@@ -132,7 +136,7 @@
   .qty-reason-input.required-empty { border-color: var(--danger); } /* 출고인데 사유를 안 적었을 때 빨간 테두리로 표시 */
 
   /* "✔ 확인" 초록 알약 버튼 — 수량 변경을 실제로 서버에 저장할 때 누르는 버튼 */
-  .qty-confirm-btn { height: 36px; /* 확인 버튼 높이 */ padding: 0 16px; /* 확인 버튼 좌우 여백(폭) */ background: var(--success); color: #fff; border: none; border-radius: 50px; font-size: 13px; /* 확인 버튼 글자 크기 */ font-weight: 700; cursor: pointer; white-space: nowrap; }
+  .qty-confirm-btn { height: 36px; /* 확인 버튼 높이 */ padding: 0 16px; /* 확인 버튼 좌우 여백(폭) */ background: var(--success); color: #fff; border: none; border-radius: 50px; font-size: 12px; /* 확인 버튼 글자 크기 */ font-weight: 700; cursor: pointer; white-space: nowrap; }
   .qty-confirm-btn:hover { background: #2d9246; }
 
   /* "✕" 취소 버튼 — 수량 변경 중인 것을 취소하는 작은 동그라미 버튼 (현재 화면에는 표시되지 않음) */
@@ -235,7 +239,7 @@
 <div class="header">
   <h1>📦 <span>재고</span>관리 <span class="live-clock" id="live-clock"></span></h1>
   <div class="header-right">
-    <span class="app-version" id="app-version">v1.0 · 260701 13:12 </span>
+    <span class="app-version" id="app-version">v1.0 · 260701 13:20</span>
     <div class="sync-status" id="sync-status">
       <div class="sync-dot" id="sync-dot"></div>
       <span id="sync-text">연결됨</span>
@@ -874,6 +878,7 @@ function cardHTML(item) {
     <span class="item-field f-badge">${item.size || ''}</span>
     <span class="item-field f-badge">${item.material || ''}</span>
     <span class="item-field f-badge">${item.thickness || ''}</span>
+    <button class="item-edit-btn admin-only" style="display:none" onclick="openEditModal('${id}')">✎ 수정</button>
   `;
 
   return `
