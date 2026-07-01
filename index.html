@@ -140,10 +140,10 @@
   /* ============================================================
      ④ 입출고 이력 표
      ============================================================ */
-  .log-table-wrap { background: #fff; border: 1px solid var(--gray-200); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); }
-  .log-table { width: 100%; border-collapse: collapse; font-size: 13px; /* 표 전체 글자 크기 */ }
-  .log-table th { background: var(--gray-50); color: var(--gray-600); font-weight: 600; font-size: 12px; padding: 10px 16px; /* 표 머리글 칸 여백 */ text-align: left; border-bottom: 1px solid var(--gray-200); }
-  .log-table td { padding: 10px 16px; /* 표 내용 칸 여백 */ border-bottom: 1px solid var(--gray-100); }
+  .log-table-wrap { background: #fff; border: 1px solid var(--gray-200); border-radius: 12px; overflow-x: auto; /* 컬럼이 많아져서 화면이 좁으면 가로로 스크롤되게 함 */ box-shadow: var(--shadow); }
+  .log-table { width: 100%; border-collapse: collapse; font-size: 13px; /* 표 전체 글자 크기 */ min-width: 950px; /* 컬럼 10개가 다 들어갈 최소 폭 - 이보다 화면이 좁으면 가로 스크롤 생김 */ }
+  .log-table th { background: var(--gray-50); color: var(--gray-600); font-weight: 600; font-size: 12px; padding: 10px 16px; /* 표 머리글 칸 여백 */ text-align: left; border-bottom: 1px solid var(--gray-200); white-space: nowrap; /* 머리글 글자 줄바꿈 방지 */ }
+  .log-table td { padding: 10px 16px; /* 표 내용 칸 여백 */ border-bottom: 1px solid var(--gray-100); white-space: nowrap; /* 내용 글자 줄바꿈 방지 */ }
   .log-table tr:last-child td { border-bottom: none; }
   .log-table tr:hover td { background: var(--gray-50); }
   .chg-in { color: var(--success); font-weight: 600; } /* 입고(+) 글자는 초록 */
@@ -633,6 +633,8 @@ function applyAdminUI() {
   document.getElementById('admin-logout-btn').style.display = isAdmin ? '' : 'none';
   document.getElementById('add-btn').style.display          = isAdmin ? '' : 'none';
   document.querySelectorAll('.admin-only').forEach(el => { el.style.display = isAdmin ? '' : 'none'; });
+  // 입출고 이력의 "✎ 수정" 버튼은 표를 다시 그릴 때만 생기므로, 로그인/로그아웃 시 이력 표도 같이 다시 그려줌
+  if (document.getElementById('log-body')) renderLog();
 }
 
 // ============================================================
