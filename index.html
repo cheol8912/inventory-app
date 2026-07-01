@@ -66,7 +66,7 @@
   .btn-outline { background: #fff; color: var(--primary); border: 1px solid var(--primary); } /* 테두리만 있는 버튼: "관리자 로그인", "새로고침" */
   .btn-outline:hover { background: var(--primary-light); }
 
-  /* 카테고리 칩 버튼 (전체 / ⚠악성 / 강관 / 각관 ... 둥근 알약 모양 필터) */
+  /* 카테고리 칩 버튼 (전체 / ⚠악성재고 / 강관 / 각관 ... 둥근 알약 모양 필터) */
   .cat-filter-row { display: flex; gap: 6px; /* 칩들 사이 간격 */ flex-wrap: wrap; margin-bottom: 1rem; }
   .cat-chip { padding: 5px 14px; /* 칩 크기 */ border-radius: 20px; /* 둥근 알약 모양 정도 */ font-size: 13px; /* 칩 글자 크기 */ font-weight: 500; border: 1px solid var(--gray-200); background: #fff; color: var(--gray-600); cursor: pointer; transition: all 0.15s; }
   .cat-chip.active { background: var(--primary); color: #fff; border-color: var(--primary); } /* 선택된 칩은 파란 배경 */
@@ -147,6 +147,12 @@
   .log-table tr:hover td { background: var(--gray-50); }
   .chg-in { color: var(--success); font-weight: 600; } /* 입고(+) 글자는 초록 */
   .chg-out { color: var(--danger); font-weight: 600; } /* 출고(-) 글자는 빨강 */
+
+  /* 입출고 이력 표 안에서 "사유"를 나중에 수정할 때 쓰는 연필 아이콘 버튼 */
+  .reason-edit-btn { background: none; border: none; color: var(--primary); cursor: pointer; font-size: 13px; padding: 2px 4px; margin-left: 4px; vertical-align: middle; }
+  .reason-edit-btn:hover { text-decoration: underline; }
+  .reason-edit-wrap { display: flex; align-items: center; gap: 4px; }
+  .reason-edit-wrap input { width: 110px; /* 이력 사유 수정칸 폭 */ padding: 4px 8px; border: 1.5px solid var(--primary); border-radius: 6px; font-size: 12px; outline: none; }
 
   /* ============================================================
      ⑤ 팝업창(모달) 공통 — 관리자 로그인 창 / 품목 추가·수정 창
@@ -378,7 +384,7 @@
     <div class="form-group" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--gray-50);border-radius:var(--radius);border:1px solid var(--gray-200);">
       <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin:0;font-size:14px;color:var(--gray-900);font-weight:500;">
         <input type="checkbox" id="f-bad" style="width:16px;height:16px;accent-color:#e03131;cursor:pointer;">
-        악성로 표시
+        악성재고로 표시
       </label>
       <span style="font-size:12px;color:var(--gray-600);">체크 시 <span style="color:#e03131;font-weight:600;">악성</span> 배지 표시</span>
     </div>
@@ -511,6 +517,7 @@ function periodToDate(period) {
 // Supabase에서 받아온 입출고이력 원본 행 → 화면에서 쓰는 형태로 변환
 function mapLogRows(rows) {
   return rows.map(r => ({
+    logId:     r.id,        // 입출고이력 테이블 행 고유 id (사유 수정할 때 사용)
     id:        r.item_id,
     category:  r.category || '',
     name:      r.name || '',
@@ -799,9 +806,9 @@ function initAllSelects() {
 // 렌더링
 // ============================================================
 function renderCatChips() {
-  const allCats = ['전체','⚠ 악성','⚠ 부족',...optData.cat];
+  const allCats = ['전체','⚠ 악성재고','⚠ 재고부족',...optData.cat];
   document.getElementById('cat-filter-row').innerHTML = allCats.map(c =>
-    `<button class="cat-chip${activeCat===c?' active':''}" ${(c==='⚠ 악성'||c==='⚠ 부족')?'style="border-color:#e03131;color:#e03131;"':''} onclick="setCat('${c}')">${c}</button>`
+    `<button class="cat-chip${activeCat===c?' active':''}" ${(c==='⚠ 악성재고'||c==='⚠ 재고부족')?'style="border-color:#e03131;color:#e03131;"':''} onclick="setCat('${c}')">${c}</button>`
   ).join('');
 }
 function setCat(cat) { activeCat=cat; renderCatChips(); renderItems(); }
@@ -811,7 +818,7 @@ function renderItems() {
   const sort = document.getElementById('sort-select').value;
   let filtered = items.filter(i =>
     i.qty > 0 &&
-    (activeCat==='전체' || (activeCat==='⚠ 악성' && i.isBad) || (activeCat==='⚠ 부족' && i.qty < i.min) || i.category===activeCat) &&
+    (activeCat==='전체' || (activeCat==='⚠ 악성재고' && i.isBad) || (activeCat==='⚠ 재고부족' && i.qty < i.min) || i.category===activeCat) &&
     (i.name.toLowerCase().includes(q) || (i.material||'').toLowerCase().includes(q) ||
      (i.spec||'').toLowerCase().includes(q) || (i.category||'').toLowerCase().includes(q))
   );
@@ -951,7 +958,7 @@ async function confirmQty(id) {
   }
   const newQty = Math.max(0, item.qty + p.delta);
   await sb(`품목?id=eq.${id}`, 'PATCH', {qty: newQty});
-  await sb('입출고이력', 'POST', {
+  const logRes = await sb('입출고이력', 'POST', {
     item_id: id, category: item.category, name: item.name,
     spec: item.spec, size: item.size, material: item.material, thickness: item.thickness,
     delta: p.delta, qty: newQty, reason: reason || null
@@ -959,6 +966,7 @@ async function confirmQty(id) {
   item.qty = newQty;
   const time = new Date().toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
   logs.unshift({
+    logId: (logRes && logRes[0]) ? logRes[0].id : null,
     id, name:item.name, category:item.category,
     spec:item.spec, size:item.size, material:item.material, thickness:item.thickness,
     delta:p.delta, qty:newQty, reason, time
@@ -1000,8 +1008,42 @@ function renderLog() {
       <td>${l.thickness||'-'}</td>
       <td class="${l.delta>0?'chg-in':'chg-out'}">${l.delta>0?'+':''}${l.delta}</td>
       <td>${l.qty}개</td>
-      <td>${l.reason||'-'}</td>
+      <td id="reason-cell-${l.logId}">${l.reason||'-'}${(isAdmin && l.logId!=null) ? `<button class="reason-edit-btn" onclick="startEditReason('${l.logId}')">✎ 수정</button>` : ''}</td>
     </tr>`).join('');
+}
+
+// 이력 표에서 "사유" 칸을 입력창으로 바꿔서 나중에 채워 넣거나 고칠 수 있게 함
+function startEditReason(logId) {
+  const log = logs.find(l => String(l.logId) === String(logId)); if (!log) return;
+  const cell = document.getElementById('reason-cell-'+logId);
+  if (!cell) return;
+  const safeVal = (log.reason||'').replace(/"/g,'&quot;');
+  cell.innerHTML = `
+    <div class="reason-edit-wrap">
+      <input type="text" id="reason-edit-input-${logId}" value="${safeVal}" placeholder="사유 입력">
+      <button class="qty-confirm-btn" style="height:28px;padding:0 10px;font-size:12px;" onclick="saveEditReason('${logId}')">✔</button>
+      <button class="qty-cancel-btn" style="width:28px;height:28px;" onclick="renderLog()">✕</button>
+    </div>`;
+  const input = document.getElementById('reason-edit-input-'+logId);
+  input.focus();
+  input.onkeydown = (e) => { if (e.key === 'Enter') saveEditReason(logId); };
+}
+
+// 수정한 사유를 Supabase에 저장
+async function saveEditReason(logId) {
+  const input = document.getElementById('reason-edit-input-'+logId); if (!input) return;
+  const newReason = input.value.trim();
+  try {
+    await sb(`입출고이력?id=eq.${logId}`, 'PATCH', {reason: newReason || null});
+    const log = logs.find(l => String(l.logId) === String(logId));
+    if (log) log.reason = newReason;
+    saveCache({items, logs});
+    renderLog();
+    toast('사유가 저장됐어요.');
+  } catch(e) {
+    console.error(e);
+    toast('⚠ 사유 저장에 실패했어요. 다시 시도해 주세요.');
+  }
 }
 
 function switchTab(tab) {
