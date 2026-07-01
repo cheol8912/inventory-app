@@ -115,8 +115,13 @@
   .qty-btn-plus.active-plus   { background: var(--success); color: #fff; } /* + 버튼이 선택(활성)되면 꽉 찬 초록 */
 
   /* 수량 직접 입력하는 칸 (숫자 타이핑하는 작은 네모) */
-  .qty-direct-input { width: 100px; /* 입력칸 가로 폭 */ padding: 4px 6px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 14px; font-weight: 700; text-align: center; outline: none; color: var(--gray-900); }
+  .qty-direct-input { width: 100px; /* 입력칸 가로 폭 */ padding: 4px 6px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 14px; font-weight: 700; text-align: right; outline: none; color: var(--gray-900); }
   .qty-direct-input:focus { border-color: var(--primary); }
+  /* 수량 입력칸 오른쪽 화살표(스피너) 없애기 — 크롬/엣지/사파리용 */
+  .qty-direct-input::-webkit-inner-spin-button,
+  .qty-direct-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  /* 수량 입력칸 오른쪽 화살표(스피너) 없애기 — 파이어폭스용 */
+  .qty-direct-input { -moz-appearance: textfield; }
 
   /* "✔ 확인" 초록 알약 버튼 — 수량 변경을 실제로 서버에 저장할 때 누르는 버튼 */
   .qty-confirm-btn { height: 36px; /* 확인 버튼 높이 */ padding: 0 16px; /* 확인 버튼 좌우 여백(폭) */ background: var(--success); color: #fff; border: none; border-radius: 50px; font-size: 13px; /* 확인 버튼 글자 크기 */ font-weight: 700; cursor: pointer; white-space: nowrap; }
