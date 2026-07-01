@@ -253,10 +253,6 @@
       <button class="btn btn-outline" onclick="loadAll(true)">↻ 새로고침</button>
     </div>
     <div class="cat-filter-row" id="cat-filter-row"></div>
-    <div id="low-section" style="display:none">
-      <div class="section-label">⚠ 재고 부족</div>
-      <div id="low-list"></div>
-    </div>
     <div id="item-list"><div class="loading">⚡ 불러오는 중...</div></div>
   </div>
   <div id="tab-log" style="display:none">
@@ -753,9 +749,9 @@ function initAllSelects() {
 // 렌더링
 // ============================================================
 function renderCatChips() {
-  const allCats = ['전체','⚠ 악성재고',...optData.cat];
+  const allCats = ['전체','⚠ 악성재고','⚠ 재고부족',...optData.cat];
   document.getElementById('cat-filter-row').innerHTML = allCats.map(c =>
-    `<button class="cat-chip${activeCat===c?' active':''}" ${c==='⚠ 악성재고'?'style="border-color:#e03131;color:#e03131;"':''} onclick="setCat('${c}')">${c}</button>`
+    `<button class="cat-chip${activeCat===c?' active':''}" ${(c==='⚠ 악성재고'||c==='⚠ 재고부족')?'style="border-color:#e03131;color:#e03131;"':''} onclick="setCat('${c}')">${c}</button>`
   ).join('');
 }
 function setCat(cat) { activeCat=cat; renderCatChips(); renderItems(); }
@@ -765,7 +761,7 @@ function renderItems() {
   const sort = document.getElementById('sort-select').value;
   let filtered = items.filter(i =>
     i.qty > 0 &&
-    (activeCat==='전체' || (activeCat==='⚠ 악성재고' && i.isBad) || i.category===activeCat) &&
+    (activeCat==='전체' || (activeCat==='⚠ 악성재고' && i.isBad) || (activeCat==='⚠ 재고부족' && i.qty < i.min) || i.category===activeCat) &&
     (i.name.toLowerCase().includes(q) || (i.material||'').toLowerCase().includes(q) ||
      (i.spec||'').toLowerCase().includes(q) || (i.category||'').toLowerCase().includes(q))
   );
@@ -776,9 +772,6 @@ function renderItems() {
     if (sort==='qty-desc') return b.qty - a.qty;
     return a.name.localeCompare(b.name);
   });
-  const low = filtered.filter(i => i.qty < i.min);
-  document.getElementById('low-section').style.display = low.length ? '' : 'none';
-  document.getElementById('low-list').innerHTML = low.map(cardHTML).join('');
   const el = document.getElementById('item-list');
   if (!filtered.length) {
     el.innerHTML='<div class="empty"><div class="empty-icon">📭</div>품목이 없습니다.</div>';
@@ -820,8 +813,8 @@ function cardHTML(item) {
         <span class="badge-qty" id="qty-badge-${id}">현재수량 : ${item.qty.toLocaleString()}</span>
         ${isLow ? '<span class="item-warn">⚠ 부족</span>' : ''}
         <div class="qty-pm-wrap admin-only" style="display:none">
-          <button class="qty-btn qty-btn-minus active-minus" id="sign-minus-${id}" onclick="toggleSign('${id}','minus')">−</button>
           <button class="qty-btn qty-btn-plus" id="sign-plus-${id}" onclick="toggleSign('${id}','plus')">+</button>
+          <button class="qty-btn qty-btn-minus active-minus" id="sign-minus-${id}" onclick="toggleSign('${id}','minus')">−</button>
         </div>
         <input class="qty-direct-input admin-only" id="qty-input-${id}" style="display:none" type="number" min="0" placeholder="수량" oninput="onDirectInput('${id}',${item.qty})">
         <button class="qty-confirm-btn admin-only" id="qty-confirm-${id}" style="display:none" onclick="confirmQty('${id}')">✔ 확인</button>
