@@ -239,7 +239,7 @@
 <div class="header">
   <h1>📦 <span>재고</span>관리 <span class="live-clock" id="live-clock"></span></h1>
   <div class="header-right">
-    <span class="app-version" id="app-version">v1.0 · 260701 13:26</span>
+    <span class="app-version" id="app-version">v1.0 · 260702 08:30</span>
     <div class="sync-status" id="sync-status">
       <div class="sync-dot" id="sync-dot"></div>
       <span id="sync-text">연결됨</span>
@@ -704,9 +704,12 @@ function naturalCompare(a, b) {
 const MATERIAL_ORDER = [
   'SS400',   // 일반구조용 압연강재 (가장 흔한 일반 철강)
   'STS304',  // 스테인리스 (내식성 필요할 때)
+  'STS316',  // 스테인리스 (내식성 필요할 때)
   'AL',      // 알루미늄
   'PE',      // 폴리에틸렌 (플라스틱류)
   'PP',      // 폴리프로필렌 (플라스틱류)
+  'MC',      // 폴리아미드 (플라스틱류)
+  'HPL',     // HPL (고압축종이)
 ];
 function materialCompare(a, b) {
   const ia = MATERIAL_ORDER.indexOf(a), ib = MATERIAL_ORDER.indexOf(b);
