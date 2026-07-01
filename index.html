@@ -40,6 +40,8 @@
   .header { background: #fff; border-bottom: 1px solid var(--gray-200); padding: 0 1.5rem; display: flex; align-items: center; justify-content: space-between; height: 60px; /* 헤더 전체 높이 */ position: sticky; top: 0; z-index: 10; box-shadow: var(--shadow); }
   .header h1 { font-size: 18px; /* "재고관리" 제목 글자 크기 */ font-weight: 500; display: flex; align-items: center; gap: 8px; }
   .header h1 span { color: var(--primary); } /* "재고" 글자만 파란색 */
+  .live-clock { font-size: 12px; /* 실시간 시계 글자 크기 */ font-weight: 400; margin-left: 2px; }
+  .header h1 span.live-clock { color: var(--gray-600); } /* 시계는 회색으로 (위 "재고" 파란색 규칙보다 우선 적용) */
   .header-right { display: flex; align-items: center; gap: 10px; /* 헤더 우측 버튼들 사이 간격 */ }
   .sync-status { font-size: 12px; color: var(--gray-600); display: flex; align-items: center; gap: 5px; } /* "연결됨" 글자 */
   .app-version { font-size: 11px; /* 버전/날짜 글자 크기 - 눈에 띄지 않게 작게 */ color: var(--gray-400); /* 버전/날짜 글자색 - 연한 회색 */ white-space: nowrap; }
@@ -141,7 +143,7 @@
      ④ 입출고 이력 표
      ============================================================ */
   .log-table-wrap { background: #fff; border: 1px solid var(--gray-200); border-radius: 12px; overflow-x: auto; /* 컬럼이 많아져서 화면이 좁으면 가로로 스크롤되게 함 */ box-shadow: var(--shadow); }
-  .log-table { width: 100%; border-collapse: collapse; font-size: 13px; /* 표 전체 글자 크기 */ min-width: 1100px; /* 컬럼 10개가 다 들어갈 최소 폭 - 이보다 화면이 좁으면 가로 스크롤 생김 */ }
+  .log-table { width: 100%; border-collapse: collapse; font-size: 13px; /* 표 전체 글자 크기 */ min-width: 900px; /* 컬럼 10개가 다 들어갈 최소 폭 - 이보다 화면이 좁으면 가로 스크롤 생김 */ }
   .log-table th { background: var(--gray-50); color: var(--gray-600); font-weight: 600; font-size: 12px; padding: 10px 16px; /* 표 머리글 칸 여백 */ text-align: left; border-bottom: 1px solid var(--gray-200); white-space: nowrap; /* 머리글 글자 줄바꿈 방지 */ }
   .log-table td { padding: 10px 16px; /* 표 내용 칸 여백 */ border-bottom: 1px solid var(--gray-100); white-space: nowrap; /* 내용 글자 줄바꿈 방지 */ }
   .log-table tr:last-child td { border-bottom: none; }
@@ -229,9 +231,9 @@
 <body>
 
 <div class="header">
-  <h1>📦 <span>재고</span>관리</h1>
+  <h1>📦 <span>재고</span>관리 <span class="live-clock" id="live-clock"></span></h1>
   <div class="header-right">
-    <span class="app-version" id="app-version">v1.5 · 2026-07-01</span>
+    <span class="app-version" id="app-version">v1.6 · 2026-07-01, 12:10</span>
     <div class="sync-status" id="sync-status">
       <div class="sync-dot" id="sync-dot"></div>
       <span id="sync-text">연결됨</span>
@@ -1141,6 +1143,19 @@ function toast(msg) {
   el.textContent = msg; el.classList.add('show');
   setTimeout(() => el.classList.remove('show'), 2500);
 }
+
+// ============================================================
+// 헤더 실시간 시계
+// ============================================================
+function updateLiveClock() {
+  const el = document.getElementById('live-clock');
+  if (!el) return;
+  const d = new Date();
+  const p = n => String(n).padStart(2,'0');
+  el.textContent = `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+}
+updateLiveClock();
+setInterval(updateLiveClock, 1000);
 
 loadAll();
 </script>
