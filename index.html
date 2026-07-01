@@ -105,7 +105,7 @@
   .item-edit-btn:hover { text-decoration: underline; }
 
   /* 카드 우측: 현재수량 배지 + 수량 조절 버튼들이 있는 영역 */
-  .item-right { display: flex; align-items: center; gap: 6px; /* 우측 버튼들 사이 간격 */ flex-shrink: 0; justify-content: flex-end; width: 100%; }
+  .item-right { display: flex; align-items: center; gap: 6px; /* 우측 버튼들 사이 간격 */ flex-shrink: 0; justify-content: flex-end; /* 왼쪽 배지들과 한 줄에 붙되, 공간이 부족하면 자동으로 둘째 줄로 넘어감 */ }
 
   /* "현재수량 : n" 빨간 테두리 배지 */
   .badge-qty { color: #e03131; font-weight: 700; font-size: 12px; /* 수량 배지 글자 크기 */ padding: 5px 12px; /* 수량 배지 크기 */ border-radius: 50px; white-space: nowrap; border: 1.5px solid #e03131; background: #fff; }
@@ -434,9 +434,9 @@ let items = [], logs = [], editId = null, isAdmin = false, activeCat = '전체',
 const DEFAULT_OPT = {
   cat:       ['강관','각관','앵글','플레이트','플랜지','밸브','볼트/너트'],
   material:  ['SS400','STS304','AL','PP','PE'],
-  thickness: ['1.0t','1.2t','1.5t','2.0t','2.3t','2.4t','2.5t','2.9t','3.0t','3.3t','3.6t','4.0t','4.3t','5.2t','6.0t','6.5t','9.0t','12.0t'],
+  thickness: ['1.0t','1.2t','1.5t','2.0t','2.3t','2.5t','3.0t','3.2t','4.0t','4.5t','5.0t','6.0t'],
   spec: {
-    '강관':     ['15A(Ø21.7)','20A(Ø27.2)','25A(Ø34.0)','32A(Ø42.7)','40A(Ø48.6)','50A(Ø60.5)','65A(Ø76.3)','80A(Ø89.1)','100A(Ø114.3)','125A(Ø139.8)','150A(Ø165.2)','200A(Ø216.3)','250A(Ø267.4)','300A(Ø318.5)','400A(Ø606.4)'],
+    '강관':     ['15A(Ø21.7)','20A(Ø27.2)','25A(Ø34.0)','32A(Ø42.7)','40A(Ø48.6)','50A(Ø60.5)','65A(Ø76.3)','80A(Ø89.1)','100A(Ø114.3)','125A(Ø139.8)','150A(Ø165.2)','200A(Ø216.3)'],
     '각관':     ['20x20','25x25','30x30','40x40','50x50','60x60','75x75','100x100','20x40','25x50','30x60','40x80','50x100'],
     '앵글':     ['25x25','30x30','40x40','50x50','60x60','75x75','100x100'],
     '플레이트':  ['100x100','150x150','200x200','250x250','300x300'],
@@ -704,7 +704,6 @@ function naturalCompare(a, b) {
 const MATERIAL_ORDER = [
   'SS400',   // 일반구조용 압연강재 (가장 흔한 일반 철강)
   'STS304',  // 스테인리스 (내식성 필요할 때)
-  'STS316',  // 스테인리스 (내식성 필요할 때)
   'AL',      // 알루미늄
   'PE',      // 폴리에틸렌 (플라스틱류)
   'PP',      // 폴리프로필렌 (플라스틱류)
@@ -873,11 +872,11 @@ function renderItems() {
      (i.spec||'').toLowerCase().includes(q) || (i.category||'').toLowerCase().includes(q))
   );
   filtered.sort((a,b) => {
-    if (sort==='cat')      return (a.category||'').localeCompare(b.category||'');
-    if (sort==='spec')     return (a.spec||'').localeCompare(b.spec||'');
+    if (sort==='cat')      return (a.category||'').localeCompare(b.category||'') || naturalCompare(a.spec||'', b.spec||''); // 카테고리 같으면 규격 숫자순으로 한 번 더 정렬
+    if (sort==='spec')     return naturalCompare(a.spec||'', b.spec||'');  // 규격순: 문자가 아니라 숫자 크기로 비교 (10A가 400A보다 먼저 오게)
     if (sort==='qty-asc')  return a.qty - b.qty;
     if (sort==='qty-desc') return b.qty - a.qty;
-    return a.name.localeCompare(b.name);
+    return a.name.localeCompare(b.name) || naturalCompare(a.spec||'', b.spec||''); // 이름 같으면 규격 숫자순으로 한 번 더 정렬 (순서가 왔다갔다 하지 않게 고정)
   });
   const el = document.getElementById('item-list');
   if (!filtered.length) {
