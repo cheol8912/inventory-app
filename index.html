@@ -54,7 +54,7 @@
   .tab { padding: 14px 20px; /* 탭 버튼 위아래/좌우 여백 = 클릭 영역 크기 */ font-size: 14px; /* 탭 글자 크기 */ font-weight: 500; color: var(--gray-600); border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.15s; }
   .tab.active { color: var(--primary); border-bottom-color: var(--primary); } /* 선택된 탭은 파란 글자 + 파란 밑줄 */
 
-  .main { max-width: 960px; margin: 0 auto; padding: 1.5rem; /* 본문 영역 좌우 여백 */ }
+  .main { max-width: 980px; margin: 0 auto; padding: 1.5rem; /* 본문 영역 좌우 여백 */ }
 
   /* 검색창 + 정렬 드롭다운 + 새로고침 버튼이 있는 줄 */
   .toolbar { display: flex; gap: 8px; /* 검색창/버튼 사이 간격 */ margin-bottom: 1rem; flex-wrap: wrap; align-items: center; }
@@ -142,7 +142,7 @@
   /* ============================================================
      ④ 입출고 이력 표
      ============================================================ */
-  .log-table-wrap { background: #fff; border: 1px solid var(--gray-200); border-radius: 12px; overflow-x: auto; /* 컬럼이 많아져서 화면이 좁으면 가로로 스크롤되게 함 */ box-shadow: var(--shadow); }
+  .log-table-wrap { background: #fff; border: 1px solid var(--gray-200); border-radius: 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; /* 아이폰/아이패드에서 부드럽게 손가락으로 밀어서 스크롤되게 함 */ box-shadow: var(--shadow); }
   .log-table { width: 100%; border-collapse: collapse; font-size: 13px; /* 표 전체 글자 크기 */ min-width: 900px; /* 컬럼 10개가 다 들어갈 최소 폭 - 이보다 화면이 좁으면 가로 스크롤 생김 */ }
   .log-table th { background: var(--gray-50); color: var(--gray-600); font-weight: 600; font-size: 12px; padding: 10px 16px; /* 표 머리글 칸 여백 */ text-align: left; border-bottom: 1px solid var(--gray-200); white-space: nowrap; /* 머리글 글자 줄바꿈 방지 */ }
   .log-table td { padding: 10px 16px; /* 표 내용 칸 여백 */ border-bottom: 1px solid var(--gray-100); white-space: nowrap; /* 내용 글자 줄바꿈 방지 */ }
@@ -223,6 +223,8 @@
     .badge-qty { font-size: 13px; padding: 5px 10px; } /* 모바일 수량 배지 크기 */
     .qty-confirm-btn { height: 32px; padding: 0 12px; font-size: 12px; } /* 모바일 확인 버튼 크기 */
     .qty-direct-input { width: 60px; }
+    /* 입출고 이력 표 - 모바일에서는 최소폭을 살짝 줄여서 스크롤 거리를 줄임 (그래도 글자 줄바꿈은 안 되게 유지) */
+    .log-table { min-width: 760px; }
     /* 툴바 */
     .toolbar { gap: 6px; }
     .search-input { min-width: 0; }
