@@ -66,7 +66,7 @@
   .btn-outline { background: #fff; color: var(--primary); border: 1px solid var(--primary); } /* 테두리만 있는 버튼: "관리자 로그인", "새로고침" */
   .btn-outline:hover { background: var(--primary-light); }
 
-  /* 카테고리 칩 버튼 (전체 / ⚠악성 / 강관 / 각관 ... 둥근 알약 모양 필터) */
+  /* 카테고리 칩 버튼 (전체 / ⚠악성재고 / 강관 / 각관 ... 둥근 알약 모양 필터) */
   .cat-filter-row { display: flex; gap: 6px; /* 칩들 사이 간격 */ flex-wrap: wrap; margin-bottom: 1rem; }
   .cat-chip { padding: 5px 14px; /* 칩 크기 */ border-radius: 20px; /* 둥근 알약 모양 정도 */ font-size: 13px; /* 칩 글자 크기 */ font-weight: 500; border: 1px solid var(--gray-200); background: #fff; color: var(--gray-600); cursor: pointer; transition: all 0.15s; }
   .cat-chip.active { background: var(--primary); color: #fff; border-color: var(--primary); } /* 선택된 칩은 파란 배경 */
@@ -122,6 +122,11 @@
   .qty-direct-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
   /* 수량 입력칸 오른쪽 화살표(스피너) 없애기 — 파이어폭스용 */
   .qty-direct-input { -moz-appearance: textfield; }
+
+  /* 입출고 사유 입력칸 (출고일 땐 필수, 입고일 땐 선택) */
+  .qty-reason-input { width: 140px; /* 사유 입력칸 가로 폭 */ padding: 4px 10px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 13px; /* 사유 입력칸 글자 크기 */ outline: none; color: var(--gray-900); }
+  .qty-reason-input:focus { border-color: var(--primary); }
+  .qty-reason-input.required-empty { border-color: var(--danger); } /* 출고인데 사유를 안 적었을 때 빨간 테두리로 표시 */
 
   /* "✔ 확인" 초록 알약 버튼 — 수량 변경을 실제로 서버에 저장할 때 누르는 버튼 */
   .qty-confirm-btn { height: 36px; /* 확인 버튼 높이 */ padding: 0 16px; /* 확인 버튼 좌우 여백(폭) */ background: var(--success); color: #fff; border: none; border-radius: 50px; font-size: 13px; /* 확인 버튼 글자 크기 */ font-weight: 700; cursor: pointer; white-space: nowrap; }
@@ -256,11 +261,20 @@
     <div id="item-list"><div class="loading">⚡ 불러오는 중...</div></div>
   </div>
   <div id="tab-log" style="display:none">
-    <div class="section-label">입출고 이력 (최근 100건)</div>
+    <div class="toolbar" style="margin-bottom:0.6rem;">
+      <span class="section-label" style="margin:0;">입출고 이력</span>
+      <select class="filter-select" id="log-period-select" onchange="changeLogPeriod(this.value)" style="margin-left:auto;">
+        <option value="1m">최근 1개월</option>
+        <option value="3m" selected>최근 3개월</option>
+        <option value="6m">최근 6개월</option>
+        <option value="1y">최근 1년</option>
+        <option value="3y">최근 3년</option>
+      </select>
+    </div>
     <div class="log-table-wrap">
       <table class="log-table">
-        <thead><tr><th>시간</th><th>카테고리</th><th>품목명</th><th>변경</th><th>잔여</th></tr></thead>
-        <tbody id="log-body"><tr><td colspan="5" class="loading">불러오는 중...</td></tr></tbody>
+        <thead><tr><th>시간</th><th>카테고리</th><th>품목명</th><th>변경</th><th>잔여</th><th>사유</th></tr></thead>
+        <tbody id="log-body"><tr><td colspan="6" class="loading">불러오는 중...</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -364,7 +378,7 @@
     <div class="form-group" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--gray-50);border-radius:var(--radius);border:1px solid var(--gray-200);">
       <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin:0;font-size:14px;color:var(--gray-900);font-weight:500;">
         <input type="checkbox" id="f-bad" style="width:16px;height:16px;accent-color:#e03131;cursor:pointer;">
-        악성로 표시
+        악성재고로 표시
       </label>
       <span style="font-size:12px;color:var(--gray-600);">체크 시 <span style="color:#e03131;font-weight:600;">악성</span> 배지 표시</span>
     </div>
@@ -397,7 +411,7 @@ const ADMIN_PASSWORD = '9096';                // ← 비밀번호
 const CACHE_KEY = 'inv_cache';
 const OPT_KEY   = 'inv_opt';
 
-let items = [], logs = [], editId = null, isAdmin = false, activeCat = '전체';
+let items = [], logs = [], editId = null, isAdmin = false, activeCat = '전체', logPeriod = '3m';
 
 const DEFAULT_OPT = {
   cat:       ['강관','각관','앵글','플레이트','플랜지','밸브','볼트/너트'],
@@ -483,11 +497,50 @@ async function loadAll(forceRefresh=false) {
   document.getElementById('cache-banner').classList.add('hidden');
 }
 
+// ============================================================
+// 입출고 이력 기간 필터
+// ============================================================
+// 기간 코드('1m','3m','6m','1y','3y')를 실제 날짜(그만큼 이전 날짜)로 변환
+function periodToDate(period) {
+  const months = { '1m':1, '3m':3, '6m':6, '1y':12, '3y':36 }[period] || 3;
+  const d = new Date();
+  d.setMonth(d.getMonth() - months);
+  return d.toISOString();
+}
+
+// Supabase에서 받아온 입출고이력 원본 행 → 화면에서 쓰는 형태로 변환
+function mapLogRows(rows) {
+  return rows.map(r => ({
+    id:       r.item_id,
+    category: r.category || '',
+    name:     r.name || '',
+    delta:    r.delta,
+    qty:      r.qty,
+    reason:   r.reason || '',
+    time:     new Date(r.created_at).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}),
+  }));
+}
+
+// 기간 드롭다운을 바꿨을 때 → 해당 기간만큼만 서버에서 다시 불러옴
+async function changeLogPeriod(period) {
+  logPeriod = period;
+  document.getElementById('log-body').innerHTML = '<tr><td colspan="6" class="loading">⚡ 불러오는 중...</td></tr>';
+  try {
+    const logRows = await sb(`입출고이력?created_at=gte.${encodeURIComponent(periodToDate(period))}&order=created_at.desc`);
+    logs = mapLogRows(logRows);
+    saveCache({items, logs});
+    renderLog();
+  } catch(e) {
+    console.error(e);
+    toast('⚠ 이력을 불러오지 못했습니다.');
+  }
+}
+
 async function fetchFresh() {
   try {
     const [itemRows, logRows, optRows] = await Promise.all([
       sb('품목?order=created_at.asc'),
-      sb('입출고이력?order=created_at.desc&limit=100'),
+      sb(`입출고이력?created_at=gte.${encodeURIComponent(periodToDate(logPeriod))}&order=created_at.desc`),
       sb('옵션설정?id=eq.1'),
     ]);
 
@@ -504,14 +557,7 @@ async function fetchFresh() {
       min:       r.min_qty || 5,
     }));
 
-    logs = logRows.map(r => ({
-      id:       r.item_id,
-      category: r.category || '',
-      name:     r.name || '',
-      delta:    r.delta,
-      qty:      r.qty,
-      time:     new Date(r.created_at).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}),
-    }));
+    logs = mapLogRows(logRows);
 
     if (optRows.length && optRows[0].data) {
       optData = optRows[0].data;
@@ -749,9 +795,9 @@ function initAllSelects() {
 // 렌더링
 // ============================================================
 function renderCatChips() {
-  const allCats = ['전체','⚠ 악성','⚠ 부족',...optData.cat];
+  const allCats = ['전체','⚠ 악성재고','⚠ 재고부족',...optData.cat];
   document.getElementById('cat-filter-row').innerHTML = allCats.map(c =>
-    `<button class="cat-chip${activeCat===c?' active':''}" ${(c==='⚠ 악성'||c==='⚠ 부족')?'style="border-color:#e03131;color:#e03131;"':''} onclick="setCat('${c}')">${c}</button>`
+    `<button class="cat-chip${activeCat===c?' active':''}" ${(c==='⚠ 악성재고'||c==='⚠ 재고부족')?'style="border-color:#e03131;color:#e03131;"':''} onclick="setCat('${c}')">${c}</button>`
   ).join('');
 }
 function setCat(cat) { activeCat=cat; renderCatChips(); renderItems(); }
@@ -761,7 +807,7 @@ function renderItems() {
   const sort = document.getElementById('sort-select').value;
   let filtered = items.filter(i =>
     i.qty > 0 &&
-    (activeCat==='전체' || (activeCat==='⚠ 악성' && i.isBad) || (activeCat==='⚠ 재고부족' && i.qty < i.min) || i.category===activeCat) &&
+    (activeCat==='전체' || (activeCat==='⚠ 악성재고' && i.isBad) || (activeCat==='⚠ 재고부족' && i.qty < i.min) || i.category===activeCat) &&
     (i.name.toLowerCase().includes(q) || (i.material||'').toLowerCase().includes(q) ||
      (i.spec||'').toLowerCase().includes(q) || (i.category||'').toLowerCase().includes(q))
   );
@@ -817,6 +863,7 @@ function cardHTML(item) {
           <button class="qty-btn qty-btn-minus active-minus" id="sign-minus-${id}" onclick="toggleSign('${id}','minus')">−</button>
         </div>
         <input class="qty-direct-input admin-only" id="qty-input-${id}" style="display:none" type="number" min="0" placeholder="수량" oninput="onDirectInput('${id}',${item.qty})">
+        <input class="qty-reason-input admin-only" id="qty-reason-${id}" style="display:none" type="text" placeholder="사유 (출고 시 필수)" oninput="onReasonInput('${id}')">
         <button class="qty-confirm-btn admin-only" id="qty-confirm-${id}" style="display:none" onclick="confirmQty('${id}')">✔ 확인</button>
       </div>
     </div>
@@ -859,6 +906,7 @@ function onDirectInput(id, baseQty) {
     pendingQty[id] = null;
     document.getElementById('qty-confirm-'+id).style.display = 'none';
     document.getElementById('qty-cancel-'+id).style.display  = val > 0 ? '' : 'none';
+    document.getElementById('qty-reason-'+id).style.display  = 'none';
     return;
   }
   pendingQty[id] = { delta, localQty: next };
@@ -868,12 +916,19 @@ function onDirectInput(id, baseQty) {
     badge.className   = 'badge-qty';
     document.getElementById('qty-confirm-'+id).style.display = 'none';
     document.getElementById('qty-cancel-'+id).style.display  = 'none';
+    document.getElementById('qty-reason-'+id).style.display  = 'none';
   } else {
     badge.textContent = `${item.qty.toLocaleString()} → ${next.toLocaleString()}`;
     badge.className   = 'badge-qty pending';
     document.getElementById('qty-confirm-'+id).style.display = '';
     document.getElementById('qty-cancel-'+id).style.display  = '';
+    document.getElementById('qty-reason-'+id).style.display  = '';
   }
+}
+
+// 사유 입력칸에 타이핑하면, 비어있다고 빨간 테두리로 표시했던 걸 원래대로 되돌림
+function onReasonInput(id) {
+  document.getElementById('qty-reason-'+id).classList.remove('required-empty');
 }
 
 // 확인 → 서버 저장
@@ -881,16 +936,26 @@ async function confirmQty(id) {
   const item = items.find(i => i.id===id); if (!item) return;
   const p    = pendingQty[id];
   if (!p || p.delta === 0) return;
+  const reasonInput = document.getElementById('qty-reason-'+id);
+  const reason = reasonInput.value.trim();
+  if (p.delta < 0 && !reason) {
+    // 출고인데 사유가 비어있으면 저장하지 않고 빨간 테두리로 알려줌
+    reasonInput.classList.add('required-empty');
+    reasonInput.focus();
+    toast('⚠ 출고 사유를 입력해 주세요.');
+    return;
+  }
   const newQty = Math.max(0, item.qty + p.delta);
   await sb(`품목?id=eq.${id}`, 'PATCH', {qty: newQty});
   await sb('입출고이력', 'POST', {
     item_id: id, category: item.category, name: item.name,
-    delta: p.delta, qty: newQty
+    delta: p.delta, qty: newQty, reason: reason || null
   });
   item.qty = newQty;
   const time = new Date().toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
-  logs.unshift({id, name:item.name, category:item.category, delta:p.delta, qty:newQty, time});
+  logs.unshift({id, name:item.name, category:item.category, delta:p.delta, qty:newQty, reason, time});
   delete pendingQty[id];
+  reasonInput.value = '';
   saveCache({items, logs});
   renderItems(); applyAdminUI(); renderLog();
   toast(`${item.name} ${p.delta>0?'+'+p.delta:p.delta}개 저장 완료`);
@@ -900,10 +965,12 @@ async function confirmQty(id) {
 function cancelQty(id) {
   const item = items.find(i => i.id===id); if (!item) return;
   delete pendingQty[id];
-  const badge = document.getElementById('qty-badge-'+id);
-  const input = document.getElementById('qty-input-'+id);
+  const badge  = document.getElementById('qty-badge-'+id);
+  const input  = document.getElementById('qty-input-'+id);
+  const reason = document.getElementById('qty-reason-'+id);
   if (badge) { badge.textContent=`현재수량 : ${item.qty.toLocaleString()}`; badge.className='badge-qty'; }
   if (input) input.value = '';
+  if (reason) { reason.value = ''; reason.classList.remove('required-empty'); reason.style.display = 'none'; }
   document.getElementById('qty-confirm-'+id).style.display = 'none';
   document.getElementById('qty-cancel-'+id).style.display  = 'none';
   // 방향 초기화
@@ -912,7 +979,7 @@ function cancelQty(id) {
 
 function renderLog() {
   const tbody = document.getElementById('log-body');
-  if (!logs.length) { tbody.innerHTML='<tr><td colspan="5" class="empty">이력이 없습니다.</td></tr>'; return; }
+  if (!logs.length) { tbody.innerHTML='<tr><td colspan="6" class="empty">이력이 없습니다.</td></tr>'; return; }
   tbody.innerHTML = logs.map(l => `
     <tr>
       <td>${l.time}</td>
@@ -920,6 +987,7 @@ function renderLog() {
       <td>${l.name}</td>
       <td class="${l.delta>0?'chg-in':'chg-out'}">${l.delta>0?'+':''}${l.delta}</td>
       <td>${l.qty}개</td>
+      <td>${l.reason||'-'}</td>
     </tr>`).join('');
 }
 
